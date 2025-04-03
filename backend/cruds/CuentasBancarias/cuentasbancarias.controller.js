@@ -1,0 +1,127 @@
+import sql from "mssql";
+import { DB_DATABASE, DB_HOST, DB_PASSWORD, DB_USER } from "../../config.js";
+
+const sqlConfig = {
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_DATABASE,
+  server: DB_HOST,
+  options: {
+    encrypt: true,
+    trustServerCertificate: true,
+  },
+};
+
+export const getAllCuentas = async (req, res) => {
+  try {
+    const pool = await sql.connect(sqlConfig);
+    const result = await pool.request().query("SELECT * FROM GCB_CUENTA_BANCARIA");
+    res.json(result.recordset);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error al obtener cuentas");
+  }
+};
+
+export const getCuentaById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const pool = await sql.connect(sqlConfig);
+    const result = await pool
+      .request()
+      .input("id", sql.Int, id)
+      .query("SELECT * FROM GCB_CUENTA_BANCARIA WHERE CUB_Cuentabancaria = @id");
+    res.json(result.recordset[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error al obtener cuenta bancaria");
+  }
+};
+
+export const createCuenta = async (req, res) => {
+  try {
+    const { CUB_Cuentabancaria, CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda, CUB_Numero, CUB_saldo} = req.body;
+
+    // Validación de datos
+    if (!CUB_Cuentabancaria || !CUB_Nombre || !CUB_Tipo || !BAN_banco || !MON_moneda || !CUB_Numero) {
+      return res.status(400).send("Faltan datos requeridos: CUB_Cuentabancaria, CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda o CUB_Numero");
+    }
+
+    const pool = await sql.connect(sqlConfig);
+
+    // Verificar si el ID ya existe
+    const checkId = await pool
+      .request()
+      .input("cuenta", sql.Int, CUB_Cuentabancaria)
+      .query("SELECT COUNT(*) AS count FROM GCB_CUENTA_BANCARIA WHERE CUB_Cuentabancaria = @cuenta");
+
+    if (checkId.recordset[0].count > 0) {
+      return res.status(400).send("La cuenta ya existe. No se pueden agregar registros duplicados.");
+    }
+
+    // Insertar el nuevo registro
+    await pool
+      .request()
+      .input("cuenta", sql.Int, CUB_Cuentabancaria)
+      .input("nombre", sql.VarChar, CUB_Nombre)
+      .input("tipo", sql.VarChar, CUB_Tipo)
+      .input("banco", sql.Int, BAN_banco)
+      .input("moneda", sql.VarChar, MON_moneda)
+      .input("numero", sql.Int, CUB_Numero)
+      .input("saldo", sql.Int, CUB_saldo)
+      .query(
+        "INSERT INTO GCB_CUENTA_BANCARIA (CUB_Cuentabancaria, CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda, CUB_Numero) VALUES (@cuenta, @nombre, @tipo, @banco, @moneda, @numero, @saldo)"
+      );
+    res.status(201).send("Cuenta creada");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error al crear Cuenta bancaria");
+  }
+};
+
+export const updateCuenta = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { CUB_Cuentabancaria, CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda, CUB_Numero, CUB_saldo} = req.body;
+
+    // Validación de datos
+    if (!CUB_Cuentabancaria || !CUB_Nombre || !CUB_Tipo || !BAN_banco || !MON_moneda || !CUB_Numero) {
+        return res.status(400).send("Faltan datos requeridos: CUB_Cuentabancaria o CUB_nombre o CUB_Tipo o BAN_banco o MON_moneda o CUB_Numero");
+    }
+
+    const pool = await sql.connect(sqlConfig);
+    await pool
+      .request()
+      .input("id", sql.Int, id)
+      .input("cuenta", sql.Int, CUB_Cuentabancaria)
+      .input("nombre", sql.VarChar, CUB_Nombre)
+      .input("tipo", sql.VarChar, CUB_Tipo)
+      .input("banco", sql.Int, BAN_banco)
+      .input("moneda", sql.VarChar, MON_moneda)
+      .input("numero", sql.Int, CUB_Numero)
+      .input("saldo", sql.Int, CUB_saldo)
+      .query(
+        "UPDATE GCB_CUENTA_BANCARIA SET CUB_Cuentabancaria = @cuenta, CUB_nombre = @nombre, CUB_Tipo = @tipo, BAN_banco = @banco, MON_moneda = @moneda, CUB_Numero = @numero, CUB_saldo = @saldo WHERE CUB_Cuentabancaria = @id"
+      );
+    res.send("Cuenta actualizada");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error al actualizar Cuenta bancaria");
+  }
+};
+
+export const deleteCuenta = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const pool = await sql.connect(sqlConfig);
+    await pool
+      .request()
+      .input("id", sql.Int, id)
+      .query("DELETE FROM GCB_CUENTA_BANCARIA WHERE CUB_Cuentabancaria = @id");
+    res.send("Cuenta eliminada");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error al eliminar cuenta bancaria");
+  }
+};
