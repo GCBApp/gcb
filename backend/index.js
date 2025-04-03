@@ -13,6 +13,8 @@ import {
 import tipoUsuarioRoutes from "./cruds/TipoUsuario/tipoUsuario.routes.js";
 import monedaRoutes from "./cruds/Moneda/moneda.routes.js";
 import usuarioRoutes from "./cruds/Usuario/usuario.routes.js";
+import tipoMovimientoRoutes from "./cruds/TipoMovimiento/tipoMovimiento.routes.js";
+
 const app = express();
 
 const sqlConfig = {
@@ -38,6 +40,7 @@ app.use(
 app.use("/api/tipoUsuario", tipoUsuarioRoutes);
 app.use("/api/moneda", monedaRoutes);
 app.use("/api/usuario", usuarioRoutes);
+app.use("/api/tipoMovimiento", tipoMovimientoRoutes);
 
 app.get("/ping", async (req, res) => {
   try {
