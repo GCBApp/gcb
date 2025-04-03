@@ -40,11 +40,11 @@ export const getCuentaById = async (req, res) => {
 
 export const createCuenta = async (req, res) => {
   try {
-    const { CUB_Cuentabancaria, CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda, CUB_Numero, CUB_saldo} = req.body;
+    const { CUB_Cuentabancaria, CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda, CUB_Número, CUB_saldo} = req.body;
 
     // Validación de datos
-    if (!CUB_Cuentabancaria || !CUB_Nombre || !CUB_Tipo || !BAN_banco || !MON_moneda || !CUB_Numero) {
-      return res.status(400).send("Faltan datos requeridos: CUB_Cuentabancaria, CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda o CUB_Numero");
+    if (!CUB_Cuentabancaria || !CUB_Nombre || !CUB_Tipo || !BAN_banco || !MON_moneda || !CUB_Número) {
+      return res.status(400).send("Faltan datos requeridos: CUB_Cuentabancaria, CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda o CUB_Número");
     }
 
     const pool = await sql.connect(sqlConfig);
@@ -67,10 +67,10 @@ export const createCuenta = async (req, res) => {
       .input("tipo", sql.VarChar, CUB_Tipo)
       .input("banco", sql.Int, BAN_banco)
       .input("moneda", sql.VarChar, MON_moneda)
-      .input("numero", sql.Int, CUB_Numero)
+      .input("Número", sql.Int, CUB_Número)
       .input("saldo", sql.Int, CUB_saldo)
       .query(
-        "INSERT INTO GCB_CUENTA_BANCARIA (CUB_Cuentabancaria, CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda, CUB_Numero) VALUES (@cuenta, @nombre, @tipo, @banco, @moneda, @numero, @saldo)"
+        "INSERT INTO GCB_CUENTA_BANCARIA (CUB_Cuentabancaria, CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda, CUB_Número, CUB_saldo) VALUES (@cuenta, @nombre, @tipo, @banco, @moneda, @Número, @saldo)"
       );
     res.status(201).send("Cuenta creada");
   } catch (err) {
@@ -82,11 +82,11 @@ export const createCuenta = async (req, res) => {
 export const updateCuenta = async (req, res) => {
   try {
     const { id } = req.params;
-    const { CUB_Cuentabancaria, CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda, CUB_Numero, CUB_saldo} = req.body;
+    const { CUB_Cuentabancaria, CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda, CUB_Número, CUB_saldo} = req.body;
 
     // Validación de datos
-    if (!CUB_Cuentabancaria || !CUB_Nombre || !CUB_Tipo || !BAN_banco || !MON_moneda || !CUB_Numero) {
-        return res.status(400).send("Faltan datos requeridos: CUB_Cuentabancaria o CUB_nombre o CUB_Tipo o BAN_banco o MON_moneda o CUB_Numero");
+    if (!CUB_Cuentabancaria || !CUB_Nombre || !CUB_Tipo || !BAN_banco || !MON_moneda || !CUB_Número) {
+        return res.status(400).send("Faltan datos requeridos: CUB_Cuentabancaria o CUB_nombre o CUB_Tipo o BAN_banco o MON_moneda o CUB_Número");
     }
 
     const pool = await sql.connect(sqlConfig);
@@ -98,10 +98,10 @@ export const updateCuenta = async (req, res) => {
       .input("tipo", sql.VarChar, CUB_Tipo)
       .input("banco", sql.Int, BAN_banco)
       .input("moneda", sql.VarChar, MON_moneda)
-      .input("numero", sql.Int, CUB_Numero)
+      .input("Número", sql.Int, CUB_Número)
       .input("saldo", sql.Int, CUB_saldo)
       .query(
-        "UPDATE GCB_CUENTA_BANCARIA SET CUB_Cuentabancaria = @cuenta, CUB_nombre = @nombre, CUB_Tipo = @tipo, BAN_banco = @banco, MON_moneda = @moneda, CUB_Numero = @numero, CUB_saldo = @saldo WHERE CUB_Cuentabancaria = @id"
+        "UPDATE GCB_CUENTA_BANCARIA SET CUB_Cuentabancaria = @cuenta, CUB_nombre = @nombre, CUB_Tipo = @tipo, BAN_banco = @banco, MON_moneda = @moneda, CUB_Número = @Número, CUB_saldo = @saldo WHERE CUB_Cuentabancaria = @id"
       );
     res.send("Cuenta actualizada");
   } catch (err) {
