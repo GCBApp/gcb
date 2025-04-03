@@ -65,7 +65,7 @@ export const createMoneda = async (req, res) => {
       .input("moneda", sql.Int, MON_moneda)
       .input("fecha", sql.Date, MON_Fecha_Mov)
       .input("nombre", sql.VarChar, MON_nombre)
-      .input("valor", sql.Int, MON_valor)
+      .input("valor", sql.Decimal(18,5), MON_valor) // Actualizado a Decimal(18,5)
       .query(
         "INSERT INTO GCB_MONEDA (MON_moneda, MON_Fecha_Mov, MON_nombre, MON_valor) VALUES (@moneda, @fecha, @nombre, @valor)"
       );
@@ -93,7 +93,7 @@ export const updateMoneda = async (req, res) => {
       .input("moneda", sql.Int, MON_moneda)
       .input("fecha", sql.Date, MON_Fecha_Mov)
       .input("nombre", sql.VarChar, MON_nombre)
-      .input("valor", sql.Int, MON_valor)
+      .input("valor", sql.Decimal(18,5), MON_valor) // Actualizado a Decimal(18,5)
       .query(
         "UPDATE GCB_MONEDA SET MON_moneda = @moneda, MON_Fecha_Mov = @fecha, MON_nombre = @nombre, MON_valor = @valor WHERE MON_moneda = @id"
       );

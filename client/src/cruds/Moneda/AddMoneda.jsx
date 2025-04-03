@@ -64,6 +64,7 @@ function AddMoneda({ onCancel, onSuccess }) {
           placeholder="Valor"
           value={formData.MON_valor}
           onChange={handleChange}
+          step="0.00001" // Permitir hasta 5 decimales
           required
         />
         <button type="submit">Agregar</button>

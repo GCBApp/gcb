@@ -105,7 +105,7 @@ function Moneda() {
                 <tr key={item.MON_moneda}>
                   <td>{item.MON_moneda}</td>
                   <td>{item.MON_nombre}</td>
-                  <td>{item.MON_valor}</td>
+                  <td>{parseFloat(item.MON_valor).toFixed(5)}</td> {/* Mostrar con 5 decimales */}
                   <td>
                     <button
                       onClick={() => {
