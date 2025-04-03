@@ -13,6 +13,10 @@ import {
 import tipoUsuarioRoutes from "./cruds/TipoUsuario/tipoUsuario.routes.js";
 import monedaRoutes from "./cruds/Moneda/moneda.routes.js";
 import usuarioRoutes from "./cruds/Usuario/usuario.routes.js";
+
+import bancosRoutes from "./cruds/Bancos/bancos.routes.js";
+import cuentasbancariasRoutes from "./cruds/CuentasBancarias/cuentasbancarias.routes.js";
+
 import tipoMovimientoRoutes from "./cruds/TipoMovimiento/tipoMovimiento.routes.js";
 
 const app = express();
@@ -40,6 +44,8 @@ app.use(
 app.use("/api/tipoUsuario", tipoUsuarioRoutes);
 app.use("/api/moneda", monedaRoutes);
 app.use("/api/usuario", usuarioRoutes);
+app.use("/api/bancos", bancosRoutes);
+app.use("/api/cuentasBancarias", cuentasbancariasRoutes);
 app.use("/api/tipoMovimiento", tipoMovimientoRoutes);
 
 app.get("/ping", async (req, res) => {
