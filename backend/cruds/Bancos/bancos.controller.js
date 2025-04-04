@@ -53,7 +53,7 @@ export const createBanco = async (req, res) => {
     const checkId = await pool
       .request()
       .input("banco", sql.Int, BAN_bancos)
-      .query("SELECT COUNT(*) AS count FROM GCB_BANCOS WHERE MON_moneda = @banco");
+      .query("SELECT COUNT(*) AS count FROM GCB_BANCOS WHERE BAN_bancos = @banco");
 
     if (checkId.recordset[0].count > 0) {
       return res.status(400).send("El banco ya existe. No se pueden agregar registros duplicados.");
@@ -63,10 +63,10 @@ export const createBanco = async (req, res) => {
     await pool
       .request()
       .input("banco", sql.Int, BAN_bancos)
-      .input("nombre", sql.VarChar, BAN_nombre)
+      .input("nombre", sql.VarChar, BAN_Nombre)
       .input("pais", sql.VarChar, BAN_Pais)
       .query(
-        "INSERT INTO GCB_BANCOS (BAN_bancos, BAN_Nombre. BAN_Pais) VALUES (@banco, @nombre, @pais)"
+        "INSERT INTO GCB_BANCOS (BAN_bancos, BAN_Nombre, BAN_Pais) VALUES (@banco, @nombre, @pais)"
       );
     res.status(201).send("Banco creado");
   } catch (err) {
@@ -81,8 +81,8 @@ export const updateBanco = async (req, res) => {
     const { BAN_bancos, BAN_Nombre, BAN_Pais} = req.body;
 
     // Validación de datos
-    if (!BAN_bancos || !BAN_Nombre) {
-        return res.status(400).send("Faltan datos requeridos: BAN_bancos o BAN_Nombre");
+    if (!BAN_bancos ) {
+        return res.status(400).send("Faltan datos requeridos: BAN_bancos ");
     }
 
     const pool = await sql.connect(sqlConfig);
@@ -90,7 +90,7 @@ export const updateBanco = async (req, res) => {
       .request()
       .input("id", sql.Int, id)
       .input("banco", sql.Int, BAN_bancos)
-      .input("nombre", sql.VarChar, BAN_nombre)
+      .input("nombre", sql.VarChar, BAN_Nombre)
       .input("pais", sql.VarChar, BAN_Pais)
       .query(
         "UPDATE GCB_BANCOS SET BAN_bancos = @banco, BAN_Nombre = @nombre, BAN_Pais = @pais WHERE BAN_bancos = @id"
