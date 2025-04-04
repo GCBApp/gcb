@@ -2,6 +2,8 @@ import { useState } from "react";
 import TipoUsuario from "../cruds/TipoUsuario/TipoUsuario";
 import Moneda from "../cruds/Moneda/Moneda";
 import Usuario from "../cruds/Usuario/Usuario"; // Importar Usuario
+import Bancos from "../cruds/Bancos/Bancos"; // Importar Bancos
+import CuentaBancaria from "../cruds/CuentasBancarias/CuentaBancaria"; // Importar CuentasBancarias
 
 function TableList() {
   const [selectedTable, setSelectedTable] = useState(null);
@@ -10,6 +12,8 @@ function TableList() {
     { name: "Tipo Usuario", component: <TipoUsuario /> },
     { name: "Moneda", component: <Moneda /> },
     { name: "Usuario", component: <Usuario /> }, // Agregar Usuario
+    { name: "Bancos", component: <Bancos /> }, // Agregar Bancos
+    { name: "Cuentas Bancarias", component: <CuentaBancaria /> }, // Agregar CuentasBancarias
   ];
 
   return (
