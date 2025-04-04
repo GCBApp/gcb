@@ -18,6 +18,7 @@ import bancosRoutes from "./cruds/Bancos/bancos.routes.js";
 import cuentasbancariasRoutes from "./cruds/CuentasBancarias/cuentasbancarias.routes.js";
 
 import tipoMovimientoRoutes from "./cruds/TipoMovimiento/tipoMovimiento.routes.js";
+import movimientoRoutes from "./cruds/Movimiento/movimiento.routes.js";
 
 const app = express();
 
@@ -47,6 +48,7 @@ app.use("/api/usuario", usuarioRoutes);
 app.use("/api/bancos", bancosRoutes);
 app.use("/api/cuentasBancarias", cuentasbancariasRoutes);
 app.use("/api/tipoMovimiento", tipoMovimientoRoutes);
+app.use("/api/movimiento", movimientoRoutes);
 
 app.get("/ping", async (req, res) => {
   try {

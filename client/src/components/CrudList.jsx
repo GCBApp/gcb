@@ -1,9 +1,11 @@
 import { useState } from "react";
 import TipoUsuario from "../cruds/TipoUsuario/TipoUsuario";
 import Moneda from "../cruds/Moneda/Moneda";
-import Usuario from "../cruds/Usuario/Usuario"; // Importar Usuario
-import Bancos from "../cruds/Bancos/Bancos"; // Importar Bancos
-import CuentaBancaria from "../cruds/CuentasBancarias/CuentaBancaria"; // Importar CuentasBancarias
+import Usuario from "../cruds/Usuario/Usuario";
+import Bancos from "../cruds/Bancos/Bancos";
+import CuentaBancaria from "../cruds/CuentasBancarias/CuentaBancaria";
+import TipoMovimiento from "../cruds/TipoMovimiento/TipoMovimiento";
+import Movimiento from "../cruds/Movimiento/Movimiento"; // Agregar la importación
 
 function TableList() {
   const [selectedTable, setSelectedTable] = useState(null);
@@ -11,9 +13,11 @@ function TableList() {
   const tables = [
     { name: "Tipo Usuario", component: <TipoUsuario /> },
     { name: "Moneda", component: <Moneda /> },
-    { name: "Usuario", component: <Usuario /> }, // Agregar Usuario
-    { name: "Bancos", component: <Bancos /> }, // Agregar Bancos
-    { name: "Cuentas Bancarias", component: <CuentaBancaria /> }, // Agregar CuentasBancarias
+    { name: "Usuario", component: <Usuario /> },
+    { name: "Bancos", component: <Bancos /> },
+    { name: "Cuentas Bancarias", component: <CuentaBancaria /> },
+    { name: "Tipos de Movimiento", component: <TipoMovimiento /> },
+    { name: "Movimientos", component: <Movimiento /> }, // Agregar a la lista
   ];
 
   return (
