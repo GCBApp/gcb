@@ -102,8 +102,8 @@ function Usuario() {
             <tbody>
               {usuarios.map((item) => (
                 <tr key={item.US_usuario}>
-                  <td>{item.US_usuario}</td>
-                  <td>{item.TU_tipousuario}</td>
+                  <td>{item.US_usuario || "N/A"}</td>
+                  <td>{item.TU_tipousuario || "N/A"}</td>
                   <td>{item.US_nombre}</td>
                   <td>{item.US_correo}</td>
                   <td>{item.US_contraseña}</td>

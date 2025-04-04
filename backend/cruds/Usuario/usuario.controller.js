@@ -15,7 +15,15 @@ const sqlConfig = {
 export const getAllUsuarios = async (req, res) => {
   try {
     const pool = await sql.connect(sqlConfig);
-    const result = await pool.request().query("SELECT * FROM GCB_USUARIOS");
+    const result = await pool.request().query(`
+      SELECT 
+        US_usuario, 
+        TU_tipousuario, 
+        US_nombre, 
+        US_correo, 
+        US_contraseña
+      FROM GCB_USUARIOS
+    `);
     res.json(result.recordset);
   } catch (err) {
     console.error(err);
