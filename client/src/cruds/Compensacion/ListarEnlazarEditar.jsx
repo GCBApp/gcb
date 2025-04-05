@@ -14,7 +14,7 @@ const CompensacionList = () => {
   const handleDelete = async (id) => {
     if (window.confirm("¿Estás seguro de eliminar esta compensación?")) {
       await axios.delete(`http://localhost:3000/api/compensacion/${id}`);
-      fetchData(); // Recargar
+      fetchData();
     }
   };
 
