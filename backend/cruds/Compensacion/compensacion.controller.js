@@ -40,7 +40,7 @@ export const getCompensacionById = async (req, res) => {
 
 export const createCompensacion = async (req, res) => {
   try {
-    const { COM_Compensacion, COM_Descripcion, COM_Fecha, COM_Tipo, COM_Valor } = req.body;
+    const { COM_Compensacion, COM_Descripción, COM_Fecha, COM_Tipo, COM_Valor } = req.body;
 
     //if (!COM_Compensacion ||!COM_Descripcion || !COM_Fecha || !COM_Tipo || !COM_Valor) {
       //return res.status(400).send("Faltan datos requeridos");
@@ -50,7 +50,7 @@ export const createCompensacion = async (req, res) => {
     await pool
       .request()
       .input("compensacion", sql.Int, COM_Compensacion)
-      .input("descripcion", sql.VarChar, COM_Descripcion)
+      .input("descripcion", sql.VarChar, COM_Descripción)
       .input("fecha", sql.Date, COM_Fecha)
       .input("tipo", sql.VarChar, COM_Tipo)
       .input("valor", sql.Int, COM_Valor)
