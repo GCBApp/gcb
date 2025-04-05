@@ -5,7 +5,11 @@ import Usuario from "../cruds/Usuario/Usuario";
 import Bancos from "../cruds/Bancos/Bancos";
 import CuentaBancaria from "../cruds/CuentasBancarias/CuentaBancaria";
 import TipoMovimiento from "../cruds/TipoMovimiento/TipoMovimiento";
-import Movimiento from "../cruds/Movimiento/Movimiento"; // Agregar la importación
+import Movimiento from "../cruds/Movimiento/Movimiento";
+import Compensacion from "../cruds/Compensacion/Compensacion"; 
+import Estado from "../cruds/Estado/Estado"; 
+
+// Agregar la importación
 
 function TableList() {
   const [selectedTable, setSelectedTable] = useState(null);
@@ -18,6 +22,8 @@ function TableList() {
     { name: "Cuentas Bancarias", component: <CuentaBancaria /> },
     { name: "Tipos de Movimiento", component: <TipoMovimiento /> },
     { name: "Movimientos", component: <Movimiento /> }, // Agregar a la lista
+    { name: "Compensaciones", component: <Compensacion /> },
+    { name: "Estado", component: <Estado /> }, // Agregar a la lista
   ];
 
   return (
