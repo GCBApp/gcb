@@ -40,21 +40,22 @@ export const getCompensacionById = async (req, res) => {
 
 export const createCompensacion = async (req, res) => {
   try {
-    const { COM_Descripcion, COM_Fecha, COM_Tipo, COM_Valor } = req.body;
+    const { COM_Compensacion, COM_Descripcion, COM_Fecha, COM_Tipo, COM_Valor } = req.body;
 
-    if (!COM_Descripcion || !COM_Fecha || !COM_Tipo || !COM_Valor) {
-      return res.status(400).send("Faltan datos requeridos");
-    }
+    //if (!COM_Compensacion ||!COM_Descripcion || !COM_Fecha || !COM_Tipo || !COM_Valor) {
+      //return res.status(400).send("Faltan datos requeridos");
+    //}
 
     const pool = await sql.connect(sqlConfig);
     await pool
       .request()
+      .input("compensacion", sql.Int, COM_Compensacion)
       .input("descripcion", sql.VarChar, COM_Descripcion)
       .input("fecha", sql.Date, COM_Fecha)
       .input("tipo", sql.VarChar, COM_Tipo)
-      .input("valor", sql.Decimal(10, 2), COM_Valor)
+      .input("valor", sql.Int, COM_Valor)
       .query(
-        "INSERT INTO GCB_COMPENSACION (COM_Descripcion, COM_Fecha, COM_Tipo, COM_Valor) VALUES (@descripcion, @fecha, @tipo, @valor)"
+        "INSERT INTO GCB_COMPENSACION (COM_Compensacion, COM_Descripción, COM_Fecha, COM_Tipo, COM_Valor) VALUES (@compensacion, @descripcion, @fecha, @tipo, @valor)"
       );
     res.status(201).send("Compensación creada");
   } catch (err) {
@@ -66,9 +67,9 @@ export const createCompensacion = async (req, res) => {
 export const updateCompensacion = async (req, res) => {
   try {
     const { id } = req.params;
-    const { COM_Descripcion, COM_Fecha, COM_Tipo, COM_Valor } = req.body;
+    const { COM_Compensacion, COM_Descripción, COM_Fecha, COM_Tipo, COM_Valor } = req.body;
 
-    if (!COM_Descripcion || !COM_Fecha || !COM_Tipo || !COM_Valor) {
+    if (!COM_Descripción || !COM_Fecha || !COM_Tipo || !COM_Valor) {
       return res.status(400).send("Faltan datos requeridos");
     }
 
@@ -76,12 +77,13 @@ export const updateCompensacion = async (req, res) => {
     await pool
       .request()
       .input("id", sql.Int, id)
-      .input("descripcion", sql.VarChar, COM_Descripcion)
+      .input("compensacion", sql.Int, COM_Compensacion)
+      .input("descripcion", sql.VarChar, COM_Descripción)
       .input("fecha", sql.Date, COM_Fecha)
       .input("tipo", sql.VarChar, COM_Tipo)
-      .input("valor", sql.Decimal(10, 2), COM_Valor)
+      .input("valor", sql.Int, COM_Valor)
       .query(
-        "UPDATE GCB_COMPENSACION SET COM_Descripcion = @descripcion, COM_Fecha = @fecha, COM_Tipo = @tipo, COM_Valor = @valor WHERE COM_Compensacion = @id"
+        "UPDATE GCB_COMPENSACION SET COM_Compensacion = @compensacion, COM_Descripción = @descripcion, COM_Fecha = @fecha, COM_Tipo = @tipo, COM_Valor = @valor WHERE COM_Compensacion = @id"
       );
     res.send("Compensación actualizada");
   } catch (err) {

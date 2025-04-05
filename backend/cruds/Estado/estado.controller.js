@@ -40,7 +40,7 @@ export const getEstadoById = async (req, res) => {
 
 export const createEstado = async (req, res) => {
   try {
-    const { MOV_movimiento, COM_Compensacion, EST_descripcion } = req.body;
+    const { EST_Estado, MOV_movimiento, COM_Compensacion, EST_descripcion } = req.body;
 
     if (!MOV_movimiento || !COM_Compensacion || !EST_descripcion) {
       return res.status(400).send("Faltan datos requeridos");
@@ -49,11 +49,12 @@ export const createEstado = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     await pool
       .request()
+      .input("estado", sql.Int, EST_Estado)
       .input("movimiento", sql.Int, MOV_movimiento)
       .input("compensacion", sql.Int, COM_Compensacion)
       .input("descripcion", sql.VarChar, EST_descripcion)
       .query(
-        "INSERT INTO GCB_ESTADO (MOV_movimiento, COM_Compensacion, EST_descripcion) VALUES (@movimiento, @compensacion, @descripcion)"
+        "INSERT INTO GCB_ESTADO (EST_Estado, MOV_movimiento, COM_Compensacion, EST_descripcion) VALUES (@estado, @movimiento, @compensacion, @descripcion)"
       );
     res.status(201).send("Estado creado");
   } catch (err) {

@@ -7,8 +7,7 @@ import CuentaBancaria from "../cruds/CuentasBancarias/CuentaBancaria";
 import TipoMovimiento from "../cruds/TipoMovimiento/TipoMovimiento";
 import Movimiento from "../cruds/Movimiento/Movimiento";
 import Compensacion from "../cruds/Compensacion/Compensacion"; 
-import Estado from "../cruds/Estado/Estado"; 
-
+import Estado from "../cruds/Estado/Estado";
 
 // Agregar la importación
 
@@ -24,7 +23,7 @@ function TableList() {
     { name: "Tipos de Movimiento", component: <TipoMovimiento /> },
     { name: "Movimientos", component: <Movimiento /> }, // Agregar a la lista
     { name: "Compensacion", component: <Compensacion /> },
-    { name: "Estado", component: <Estado /> }, // Agregar a la lista
+    { name: "Estado", component: <Estado/>}
   ];
 
   return (

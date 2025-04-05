@@ -132,7 +132,7 @@ function Movimiento() {
                       <td>{item.MOV_Valor}</td>
                       <td>{formatDate(item.MOV_Fecha_Mov)}</td>
                       <td>{item.TM_descripcion}</td>
-                      <td>{item.CUB_Numero || "N/A"}</td>
+                      <td>{item.CUB_cuentaBancaria}</td>
                       <td>{item.MON_Nombre}</td>
                       <td>{item.US_Nombre}</td>
                       <td>

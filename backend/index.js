@@ -20,6 +20,8 @@ import cuentasbancariasRoutes from "./cruds/CuentasBancarias/cuentasbancarias.ro
 import tipoMovimientoRoutes from "./cruds/TipoMovimiento/tipoMovimiento.routes.js";
 import movimientoRoutes from "./cruds/Movimiento/movimiento.routes.js";
 
+import Compensacion from "./cruds/Compensacion/compensacion.routes.js";
+import Estado from "./cruds/Estado/estado.routes.js";
 const app = express();
 
 const sqlConfig = {
@@ -49,6 +51,8 @@ app.use("/api/bancos", bancosRoutes);
 app.use("/api/cuentasBancarias", cuentasbancariasRoutes);
 app.use("/api/tipoMovimiento", tipoMovimientoRoutes);
 app.use("/api/movimiento", movimientoRoutes);
+app.use("/api/compensacion", Compensacion);
+app.use("/api/estado", Estado);
 
 app.get("/ping", async (req, res) => {
   try {
