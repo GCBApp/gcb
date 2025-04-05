@@ -9,6 +9,7 @@ import Movimiento from "../cruds/Movimiento/Movimiento";
 import Compensacion from "../cruds/Compensacion/Compensacion"; 
 import Estado from "../cruds/Estado/Estado"; 
 
+
 // Agregar la importación
 
 function TableList() {
@@ -22,7 +23,7 @@ function TableList() {
     { name: "Cuentas Bancarias", component: <CuentaBancaria /> },
     { name: "Tipos de Movimiento", component: <TipoMovimiento /> },
     { name: "Movimientos", component: <Movimiento /> }, // Agregar a la lista
-    { name: "Compensaciones", component: <Compensacion /> },
+    { name: "Compensacion", component: <Compensacion /> },
     { name: "Estado", component: <Estado /> }, // Agregar a la lista
   ];
 
