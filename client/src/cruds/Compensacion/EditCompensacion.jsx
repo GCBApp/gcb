@@ -46,7 +46,7 @@ function EditCompensacion({ initialData, onCancel, onSuccess }) {
           <input
             type="text"
             name="COM_Descripción"
-            value={formData.COM_Descripcion}
+            value={formData.COM_Descripción}
             onChange={handleChange}
             required
           />

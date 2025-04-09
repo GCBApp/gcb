@@ -42,9 +42,9 @@ export const createCompensacion = async (req, res) => {
   try {
     const { COM_Compensacion, COM_Descripción, COM_Fecha, COM_Tipo, COM_Valor } = req.body;
 
-    //if (!COM_Compensacion ||!COM_Descripcion || !COM_Fecha || !COM_Tipo || !COM_Valor) {
-      //return res.status(400).send("Faltan datos requeridos");
-    //}
+    if (!COM_Compensacion ||!COM_Descripción || !COM_Fecha || !COM_Tipo || !COM_Valor) {
+      return res.status(400).send("Faltan datos requeridos");
+    }
 
     const pool = await sql.connect(sqlConfig);
     await pool

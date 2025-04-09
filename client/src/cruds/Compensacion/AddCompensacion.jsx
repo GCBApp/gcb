@@ -3,7 +3,7 @@ import { useState } from "react";
 const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 function AddCompensacion({ onCancel, onSuccess }) {
-  const [formData, setFormData] = useState({ COM_Compensacion: "", COM_Descripción: "", COM_Fecha: "", COM_Tipo: "", COM_Valor: "" });
+  const [formData, setFormData] = useState({ COM_Compensacion: "", COM_Descripción: "", COM_Fecha: new Date().toISOString().split('T')[0], COM_Tipo: "", COM_Valor: "" });
   const [errorMessage, setErrorMessage] = useState("");
 
   // Manejar cambios en el formulario
