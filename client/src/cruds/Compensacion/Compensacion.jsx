@@ -60,8 +60,12 @@ function Compensacion() {
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
+
+  // Crear un objeto Date desde la cadena de fecha
+  const [year, month, day] = dateString.split("T")[0].split("-");
+
+  // Formatear la fecha en formato local (DD/MM/YYYY)
+  return `${day}/${month}/${year}`;
   };
 
   // Cargar datos al montar el componente
