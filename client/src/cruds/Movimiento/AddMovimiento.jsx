@@ -9,7 +9,7 @@ function AddMovimiento({ onCancel, onSuccess }) {
     MOV_Valor: "",
     MOV_Fecha_Mov: new Date().toISOString().split('T')[0],
     MOV_Fecha_Registro: new Date().toISOString().split('T')[0],
-    US_Usuario: "",
+    US_Usuario: "", // Compatible con US_usuario de la API
     MON_Moneda: "",
     TM_Tipomovimiento: "",
     CUB_Cuentabancaria: ""
@@ -38,16 +38,6 @@ function AddMovimiento({ onCancel, onSuccess }) {
         const dataCuentas = await resCuentas.json();
         setCuentasBancarias(dataCuentas);
         
-        // Obtener usuarios
-        const resUsuarios = await fetch(`${API_URL}/api/usuario`);
-        const dataUsuarios = await resUsuarios.json();
-        setUsuarios(dataUsuarios);
-        
-        // Obtener monedas
-        const resMonedas = await fetch(`${API_URL}/api/moneda`);
-        const dataMonedas = await resMonedas.json();
-        setMonedas(dataMonedas);
-        
         setLoading(false);
       } catch (err) {
         console.error("Error al cargar datos relacionados:", err);
@@ -57,6 +47,44 @@ function AddMovimiento({ onCancel, onSuccess }) {
     };
 
     fetchRelatedData();
+  }, []);
+
+  useEffect(() => {
+    const fetchRelatedData = async () => {
+      try {
+        setLoading(true);
+
+        // Obtener monedas
+        const resMonedas = await fetch(`${API_URL}/api/moneda`);
+        const dataMonedas = await resMonedas.json();
+        console.log("Monedas cargadas:", dataMonedas); // Verificar datos
+        setMonedas(dataMonedas);
+
+        setLoading(false);
+      } catch (err) {
+        console.error("Error al cargar datos relacionados:", err);
+        setErrorMessage("Error al cargar datos necesarios. Por favor, recargue la página.");
+        setLoading(false);
+      }
+    };
+
+    fetchRelatedData();
+  }, []);
+
+  useEffect(() => {
+    const fetchUsuarios = async () => {
+      try {
+        const resUsuarios = await fetch(`${API_URL}/api/usuario`);
+        const dataUsuarios = await resUsuarios.json();
+        console.log("Usuarios cargados:", dataUsuarios); // Verificar datos
+        setUsuarios(dataUsuarios);
+      } catch (err) {
+        console.error("Error al cargar usuarios:", err);
+        setErrorMessage("Error al cargar usuarios. Por favor, recargue la página.");
+      }
+    };
+
+    fetchUsuarios();
   }, []);
 
   // Manejar cambios en el formulario
@@ -186,8 +214,8 @@ function AddMovimiento({ onCancel, onSuccess }) {
           >
             <option value="">Seleccione una moneda</option>
             {monedas.map((moneda) => (
-              <option key={moneda.MON_Moneda} value={moneda.MON_Moneda}>
-                {moneda.MON_Nombre}
+              <option key={moneda.MON_moneda} value={moneda.MON_moneda}>
+                {moneda.MON_nombre} {/* Ajustado para usar MON_nombre */}
               </option>
             ))}
           </select>
@@ -202,8 +230,8 @@ function AddMovimiento({ onCancel, onSuccess }) {
           >
             <option value="">Seleccione un usuario</option>
             {usuarios.map((usuario) => (
-              <option key={usuario.US_Usuario} value={usuario.US_Usuario}>
-                {usuario.US_Nombre}
+              <option key={usuario.US_usuario} value={usuario.US_usuario}>
+                {usuario.US_nombre} {/* Ajustado para usar US_nombre */}
               </option>
             ))}
           </select>

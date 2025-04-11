@@ -3,12 +3,15 @@ import { useState, useEffect } from "react";
 const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 function EditMovimiento({ initialData, onCancel, onSuccess }) {
+  // Set today's date as default right in the initial state
+  const today = new Date().toISOString().split('T')[0];
+  
   const [formData, setFormData] = useState({
     MOV_id: "",
     MOV_Descripcion: "",
     MOV_Valor: "",
-    MOV_Fecha_Mov: "",
-    MOV_Fecha_Registro: "",
+    MOV_Fecha_Mov: today, // Initialize with today's date
+    MOV_Fecha_Registro: today, // Initialize with today's date
     US_Usuario: "",
     MON_Moneda: "",
     TM_Tipomovimiento: "",
@@ -25,19 +28,21 @@ function EditMovimiento({ initialData, onCancel, onSuccess }) {
   // Cargar datos iniciales
   useEffect(() => {
     if (initialData) {
-      const fechaMov = initialData.MOV_Fecha_Mov ? new Date(initialData.MOV_Fecha_Mov).toISOString().split('T')[0] : "";
-      const fechaReg = initialData.MOV_Fecha_Registro ? new Date(initialData.MOV_Fecha_Registro).toISOString().split('T')[0] : "";
+      // Get today's date
+      const currentDate = new Date().toISOString().split('T')[0];
       
+      // Create a new form with blank fields but today's date
       setFormData({
-        MOV_id: initialData.MOV_id || "",
-        MOV_Descripcion: initialData.MOV_Descripcion || "",
-        MOV_Valor: initialData.MOV_Valor || "",
-        MOV_Fecha_Mov: fechaMov,
-        MOV_Fecha_Registro: fechaReg,
-        US_Usuario: initialData.US_Usuario || "",
-        MON_Moneda: initialData.MON_Moneda || "",
-        TM_Tipomovimiento: initialData.TM_Tipomovimiento || "",
-        CUB_Cuentabancaria: initialData.CUB_Cuentabancaria || ""
+        // Reset all fields to blank
+        MOV_id: "",
+        MOV_Descripcion: "",
+        MOV_Valor: "",
+        MOV_Fecha_Mov: currentDate, // Use today's date
+        MOV_Fecha_Registro: currentDate, // Use today's date
+        US_Usuario: "",
+        MON_Moneda: "",
+        TM_Tipomovimiento: "",
+        CUB_Cuentabancaria: ""
       });
     }
   }, [initialData]);
@@ -210,8 +215,8 @@ function EditMovimiento({ initialData, onCancel, onSuccess }) {
           >
             <option value="">Seleccione una moneda</option>
             {monedas.map((moneda) => (
-              <option key={moneda.MON_Moneda} value={moneda.MON_Moneda}>
-                {moneda.MON_Nombre}
+              <option key={moneda.MON_moneda} value={moneda.MON_moneda}>
+                {moneda.MON_nombre} {/* Ajustado para usar MON_nombre en minúscula */}
               </option>
             ))}
           </select>
@@ -226,8 +231,8 @@ function EditMovimiento({ initialData, onCancel, onSuccess }) {
           >
             <option value="">Seleccione un usuario</option>
             {usuarios.map((usuario) => (
-              <option key={usuario.US_Usuario} value={usuario.US_Usuario}>
-                {usuario.US_Nombre}
+              <option key={usuario.US_usuario} value={usuario.US_usuario}>
+                {usuario.US_nombre} {/* Ajustado para usar US_nombre en minúscula */}
               </option>
             ))}
           </select>
