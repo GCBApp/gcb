@@ -29,7 +29,7 @@ export const getMonedasById = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     const result = await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("SELECT * FROM GCB_MONEDA WHERE MON_moneda = @id");
     res.json(result.recordset[0]);
   } catch (err) {
@@ -52,7 +52,7 @@ export const createMoneda = async (req, res) => {
     // Verificar si el ID ya existe
     const checkId = await pool
       .request()
-      .input("moneda", sql.Int, MON_moneda)
+      .input("moneda", sql.Char(10), MON_moneda)
       .query("SELECT COUNT(*) AS count FROM GCB_MONEDA WHERE MON_moneda = @moneda");
 
     if (checkId.recordset[0].count > 0) {
@@ -62,7 +62,7 @@ export const createMoneda = async (req, res) => {
     // Insertar el nuevo registro
     await pool
       .request()
-      .input("moneda", sql.Int, MON_moneda)
+      .input("moneda", sql.Char(10), MON_moneda)
       .input("fecha", sql.Date, MON_Fecha_Mov)
       .input("nombre", sql.VarChar, MON_nombre)
       .input("valor", sql.Decimal(18,5), MON_valor) // Actualizado a Decimal(18,5)
@@ -89,8 +89,8 @@ export const updateMoneda = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     await pool
       .request()
-      .input("id", sql.Int, id)
-      .input("moneda", sql.Int, MON_moneda)
+      .input("id", sql.Char(10), id)
+      .input("moneda", sql.Char(10), MON_moneda)
       .input("fecha", sql.Date, MON_Fecha_Mov)
       .input("nombre", sql.VarChar, MON_nombre)
       .input("valor", sql.Decimal(18,5), MON_valor) // Actualizado a Decimal(18,5)
@@ -111,7 +111,7 @@ export const deleteMoneda = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("DELETE FROM GCB_MONEDA WHERE MON_moneda = @id");
     res.send("Moneda eliminada");
   } catch (err) {

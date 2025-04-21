@@ -29,10 +29,10 @@ function EditCompensacion({ initialData, onCancel, onSuccess }) {
     <div>
       <h2>Editar Compensación</h2>
       <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
-      <div>
+        <div>
           <label>Referencia:</label>
           <input
-            type="number"
+            type="text" // Asegúrate de que sea "text" para reflejar Char(10)
             name="COM_Compensacion"
             value={formData.COM_Compensacion}
             onChange={handleChange}
@@ -51,8 +51,6 @@ function EditCompensacion({ initialData, onCancel, onSuccess }) {
             required
           />
         </div>
-
-        
 
         <div>
           <label>Fecha:</label>

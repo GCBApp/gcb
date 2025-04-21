@@ -37,7 +37,7 @@ export const getUsuarioById = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     const result = await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("SELECT * FROM GCB_USUARIOS WHERE US_usuario = @id");
     res.json(result.recordset[0]);
   } catch (err) {
@@ -60,7 +60,7 @@ export const createUsuario = async (req, res) => {
     // Verificar si el ID ya existe
     const checkId = await pool
       .request()
-      .input("usuario", sql.Int, US_usuario)
+      .input("usuario", sql.Char(10), US_usuario)
       .query("SELECT COUNT(*) AS count FROM GCB_USUARIOS WHERE US_usuario = @usuario");
 
     if (checkId.recordset[0].count > 0) {
@@ -70,8 +70,8 @@ export const createUsuario = async (req, res) => {
     // Insertar el nuevo registro
     await pool
       .request()
-      .input("usuario", sql.Int, US_usuario)
-      .input("tipousuario", sql.Int, TU_tipousuario)
+      .input("usuario", sql.Char(10), US_usuario)
+      .input("tipousuario", sql.Char(10), TU_tipousuario)
       .input("nombre", sql.VarChar(40), US_nombre)
       .input("correo", sql.VarChar(40), US_correo)
       .input("contraseña", sql.VarChar(20), US_contraseña)
@@ -98,9 +98,9 @@ export const updateUsuario = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     await pool
       .request()
-      .input("id", sql.Int, id)
-      .input("usuario", sql.Int, US_usuario)
-      .input("tipousuario", sql.Int, TU_tipousuario)
+      .input("id", sql.Char(10), id)
+      .input("usuario", sql.Char(10), US_usuario)
+      .input("tipousuario", sql.Char(10), TU_tipousuario)
       .input("nombre", sql.VarChar(40), US_nombre)
       .input("correo", sql.VarChar(40), US_correo)
       .input("contraseña", sql.VarChar(20), US_contraseña)
@@ -121,11 +121,22 @@ export const deleteUsuario = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("DELETE FROM GCB_USUARIOS WHERE US_usuario = @id");
     res.send("Usuario eliminado");
   } catch (err) {
     console.error(err);
     res.status(500).send("Error al eliminar usuario");
+  }
+};
+
+export const getTiposUsuario = async (req, res) => {
+  try {
+    const pool = await sql.connect(sqlConfig);
+    const result = await pool.request().query("SELECT * FROM GCB_TIPOS_USUARIOS");
+    res.json(result.recordset);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error al obtener tipos de usuario");
   }
 };

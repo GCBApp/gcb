@@ -30,7 +30,7 @@ function EditMoneda({ initialData, onCancel, onSuccess }) {
       <h2>Editar Moneda</h2>
       <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
         <input
-          type="number"
+          type="text" // Cambiado de "number" a "text" para reflejar Char(10)
           name="MON_moneda"
           placeholder="ID Moneda"
           value={formData.MON_moneda}

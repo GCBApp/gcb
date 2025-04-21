@@ -30,7 +30,7 @@ function EditBanco({ initialData, onCancel, onSuccess }) {
       <h2>Editar Banco</h2>
       <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
         <input
-          type="number"
+          type="text"
           name="BAN_bancos"
           placeholder="ID Banco"
           value={formData.BAN_bancos}

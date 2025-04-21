@@ -43,7 +43,7 @@ function AddTipoMovimiento({ onCancel, onSuccess }) {
       )}
       <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
         <input
-          type="number"
+          type="text" // Cambiado de "number" a "text" para reflejar Char(10)
           name="TM_Tipomovimiento"
           placeholder="ID Tipo Movimiento"
           value={formData.TM_Tipomovimiento}

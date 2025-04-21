@@ -43,7 +43,7 @@ function AddBanco({ onCancel, onSuccess }) {
       )}
       <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
         <input
-          type="number"
+          type="text"
           name="BAN_bancos"
           placeholder="ID Banco"
           value={formData.BAN_bancos}

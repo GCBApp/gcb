@@ -45,7 +45,7 @@ function AddCompensacion({ onCancel, onSuccess }) {
       <div>
           <label>Referencia:</label>
           <input
-            type="number"
+            type="text" // Cambiado de "number" a "text" para reflejar Char(10)
             name="COM_Compensacion"
             value={formData.COM_Compensacion}
             onChange={handleChange}

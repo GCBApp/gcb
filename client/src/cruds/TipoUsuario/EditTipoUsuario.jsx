@@ -30,7 +30,7 @@ function EditTipoUsuario({ initialData, onCancel, onSuccess }) {
       <h2>Editar TipoUsuario</h2>
       <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
         <input
-          type="number"
+          type="text" // Cambiado de "number" a "text" para reflejar Char(10)
           name="TU_tipousuario"
           placeholder="ID TipoUsuario"
           value={formData.TU_tipousuario}

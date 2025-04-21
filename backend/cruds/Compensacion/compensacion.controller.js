@@ -29,7 +29,7 @@ export const getCompensacionById = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     const result = await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("SELECT * FROM GCB_COMPENSACION WHERE COM_Compensacion = @id");
     res.json(result.recordset[0]);
   } catch (err) {
@@ -49,7 +49,7 @@ export const createCompensacion = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     await pool
       .request()
-      .input("compensacion", sql.Int, COM_Compensacion)
+      .input("compensacion", sql.Char(10), COM_Compensacion)
       .input("descripcion", sql.VarChar, COM_Descripción)
       .input("fecha", sql.Date, COM_Fecha)
       .input("tipo", sql.VarChar, COM_Tipo)
@@ -76,8 +76,8 @@ export const updateCompensacion = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     await pool
       .request()
-      .input("id", sql.Int, id)
-      .input("compensacion", sql.Int, COM_Compensacion)
+      .input("id", sql.Char(10), id)
+      .input("compensacion", sql.Char(10), COM_Compensacion)
       .input("descripcion", sql.VarChar, COM_Descripción)
       .input("fecha", sql.Date, COM_Fecha)
       .input("tipo", sql.VarChar, COM_Tipo)
@@ -98,7 +98,7 @@ export const deleteCompensacion = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("DELETE FROM GCB_COMPENSACION WHERE COM_Compensacion = @id");
     res.send("Compensación eliminada");
   } catch (err) {

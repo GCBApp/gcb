@@ -29,7 +29,7 @@ export const getTipoUsuarioById = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     const result = await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("SELECT * FROM GCB_TIPOS_USUARIOS WHERE TU_tipousuario = @id");
     res.json(result.recordset[0]);
   } catch (err) {
@@ -52,7 +52,7 @@ export const createTipoUsuario = async (req, res) => {
     // Verificar si el ID ya existe
     const checkId = await pool
       .request()
-      .input("tipousuario", sql.Int, TU_tipousuario)
+      .input("tipousuario", sql.Char(10), TU_tipousuario)
       .query("SELECT COUNT(*) AS count FROM GCB_TIPOS_USUARIOS WHERE TU_tipousuario = @tipousuario");
 
     if (checkId.recordset[0].count > 0) {
@@ -62,7 +62,7 @@ export const createTipoUsuario = async (req, res) => {
     // Insertar el nuevo registro
     await pool
       .request()
-      .input("tipousuario", sql.Int, TU_tipousuario)
+      .input("tipousuario", sql.Char(10), TU_tipousuario)
       .input("descripcion", sql.VarChar, TU_descripcion)
       .query(
         "INSERT INTO GCB_TIPOS_USUARIOS (TU_tipousuario, TU_descripcion) VALUES (@tipousuario, @descripcion)"
@@ -87,8 +87,8 @@ export const updateTipoUsuario = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     await pool
       .request()
-      .input("id", sql.Int, id)
-      .input("tipousuario", sql.Int, TU_tipousuario)
+      .input("id", sql.Char(10), id)
+      .input("tipousuario", sql.Char(10), TU_tipousuario)
       .input("descripcion", sql.VarChar, TU_descripcion)
       .query(
         "UPDATE GCB_TIPOS_USUARIOS SET TU_tipousuario = @tipousuario, TU_descripcion = @descripcion WHERE TU_tipousuario = @id"
@@ -107,7 +107,7 @@ export const deleteTipoUsuario = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("DELETE FROM GCB_TIPOS_USUARIOS WHERE TU_tipousuario = @id");
     res.send("Tipo de usuario eliminado");
   } catch (err) {

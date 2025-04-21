@@ -29,7 +29,7 @@ export const getBancoById = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     const result = await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("SELECT * FROM GCB_BANCOS WHERE BAN_bancos = @id");
     res.json(result.recordset[0]);
   } catch (err) {
@@ -52,7 +52,7 @@ export const createBanco = async (req, res) => {
     // Verificar si el ID ya existe
     const checkId = await pool
       .request()
-      .input("banco", sql.Int, BAN_bancos)
+      .input("banco", sql.Char(10), BAN_bancos)
       .query("SELECT COUNT(*) AS count FROM GCB_BANCOS WHERE BAN_bancos = @banco");
 
     if (checkId.recordset[0].count > 0) {
@@ -62,7 +62,7 @@ export const createBanco = async (req, res) => {
     // Insertar el nuevo registro
     await pool
       .request()
-      .input("banco", sql.Int, BAN_bancos)
+      .input("banco", sql.Char(10), BAN_bancos)
       .input("nombre", sql.VarChar, BAN_Nombre)
       .input("pais", sql.VarChar, BAN_Pais)
       .query(
@@ -88,8 +88,8 @@ export const updateBanco = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     await pool
       .request()
-      .input("id", sql.Int, id)
-      .input("banco", sql.Int, BAN_bancos)
+      .input("id", sql.Char(10), id)
+      .input("banco", sql.Char(10), BAN_bancos)
       .input("nombre", sql.VarChar, BAN_Nombre)
       .input("pais", sql.VarChar, BAN_Pais)
       .query(
@@ -109,7 +109,7 @@ export const deleteBanco = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("DELETE FROM GCB_BANCOS WHERE BAN_bancos = @id");
     res.send("banco eliminada");
   } catch (err) {

@@ -43,7 +43,7 @@ function AddCuentaBancaria({ onCancel, onSuccess }) {
       )}
       <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
         <input
-          type="number"
+          type="text" // Cambiado de "number" a "text" para reflejar Char(10)
           name="CUB_Cuentabancaria"
           placeholder="ID Cuenta"
           value={formData.CUB_Cuentabancaria}
@@ -67,7 +67,7 @@ function AddCuentaBancaria({ onCancel, onSuccess }) {
           required
         />
         <input
-          type="number"
+          type="text"
           name="BAN_banco"
           placeholder="banco"
           value={formData.BAN_banco}

@@ -29,7 +29,7 @@ export const getTipoMovimientoById = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     const result = await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("SELECT * FROM GCB_TIPO_MOVIMIENTO WHERE TM_Tipomovimiento = @id");
     
     if (result.recordset.length === 0) {
@@ -57,7 +57,7 @@ export const createTipoMovimiento = async (req, res) => {
     // Verificar si el ID ya existe
     const checkId = await pool
       .request()
-      .input("tipomovimiento", sql.Int, TM_Tipomovimiento)
+      .input("tipomovimiento", sql.Char(10), TM_Tipomovimiento)
       .query("SELECT COUNT(*) AS count FROM GCB_TIPO_MOVIMIENTO WHERE TM_Tipomovimiento = @tipomovimiento");
 
     if (checkId.recordset[0].count > 0) {
@@ -67,7 +67,7 @@ export const createTipoMovimiento = async (req, res) => {
     // Insertar el nuevo registro
     await pool
       .request()
-      .input("tipomovimiento", sql.Int, TM_Tipomovimiento)
+      .input("tipomovimiento", sql.Char(10), TM_Tipomovimiento)
       .input("descripcion", sql.VarChar, TM_descripcion)
       .query(
         "INSERT INTO GCB_TIPO_MOVIMIENTO (TM_Tipomovimiento, TM_descripcion) VALUES (@tipomovimiento, @descripcion)"
@@ -94,7 +94,7 @@ export const updateTipoMovimiento = async (req, res) => {
     // Verificar si el registro existe
     const checkExists = await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("SELECT COUNT(*) AS count FROM GCB_TIPO_MOVIMIENTO WHERE TM_Tipomovimiento = @id");
 
     if (checkExists.recordset[0].count === 0) {
@@ -103,8 +103,8 @@ export const updateTipoMovimiento = async (req, res) => {
     
     await pool
       .request()
-      .input("id", sql.Int, id)
-      .input("tipomovimiento", sql.Int, TM_Tipomovimiento)
+      .input("id", sql.Char(10), id)
+      .input("tipomovimiento", sql.Char(10), TM_Tipomovimiento)
       .input("descripcion", sql.VarChar, TM_descripcion)
       .query(
         "UPDATE GCB_TIPO_MOVIMIENTO SET TM_Tipomovimiento = @tipomovimiento, TM_descripcion = @descripcion WHERE TM_Tipomovimiento = @id"
@@ -125,7 +125,7 @@ export const deleteTipoMovimiento = async (req, res) => {
     // Verificar si el registro existe
     const checkExists = await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("SELECT COUNT(*) AS count FROM GCB_TIPO_MOVIMIENTO WHERE TM_Tipomovimiento = @id");
 
     if (checkExists.recordset[0].count === 0) {
@@ -134,7 +134,7 @@ export const deleteTipoMovimiento = async (req, res) => {
     
     await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("DELETE FROM GCB_TIPO_MOVIMIENTO WHERE TM_Tipomovimiento = @id");
     res.send("Tipo de movimiento eliminado");
   } catch (err) {

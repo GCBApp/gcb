@@ -29,7 +29,7 @@ export const getCuentaById = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     const result = await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("SELECT * FROM GCB_CUENTA_BANCARIA WHERE CUB_Cuentabancaria = @id");
     res.json(result.recordset[0]);
   } catch (err) {
@@ -52,7 +52,7 @@ export const createCuenta = async (req, res) => {
     // Verificar si el ID ya existe
     const checkId = await pool
       .request()
-      .input("cuenta", sql.Int, CUB_Cuentabancaria)
+      .input("cuenta", sql.Char(10), CUB_Cuentabancaria)
       .query("SELECT COUNT(*) AS count FROM GCB_CUENTA_BANCARIA WHERE CUB_Cuentabancaria = @cuenta");
 
     if (checkId.recordset[0].count > 0) {
@@ -62,7 +62,7 @@ export const createCuenta = async (req, res) => {
     // Insertar el nuevo registro
     await pool
       .request()
-      .input("cuenta", sql.Int, CUB_Cuentabancaria)
+      .input("cuenta", sql.Char(10), CUB_Cuentabancaria)
       .input("nombre", sql.VarChar, CUB_Nombre)
       .input("tipo", sql.VarChar, CUB_Tipo)
       .input("banco", sql.Int, BAN_banco)
@@ -92,8 +92,8 @@ export const updateCuenta = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     await pool
       .request()
-      .input("id", sql.Int, id)
-      .input("cuenta", sql.Int, CUB_Cuentabancaria)
+      .input("id", sql.Char(10), id)
+      .input("cuenta", sql.Char(10), CUB_Cuentabancaria)
       .input("nombre", sql.VarChar, CUB_Nombre)
       .input("tipo", sql.VarChar, CUB_Tipo)
       .input("banco", sql.Int, BAN_banco)
@@ -117,7 +117,7 @@ export const deleteCuenta = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("DELETE FROM GCB_CUENTA_BANCARIA WHERE CUB_Cuentabancaria = @id");
     res.send("Cuenta eliminada");
   } catch (err) {

@@ -41,7 +41,7 @@ export const getMovimientoById = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     const result = await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("SELECT * FROM GCB_MOVIMIENTO WHERE MOV_Movimiento = @id");
     
     if (result.recordset.length === 0) {
@@ -89,7 +89,7 @@ export const createMovimiento = async (req, res) => {
     // Verificar si ya existe este ID
     const checkId = await pool
       .request()
-      .input("movId", sql.NVarChar(50), MOV_id)
+      .input("movId", sql.Char(10), MOV_id)
       .query("SELECT COUNT(*) AS count FROM GCB_MOVIMIENTO WHERE MOV_id = @movId");
 
     if (checkId.recordset[0].count > 0) {
@@ -108,7 +108,7 @@ export const createMovimiento = async (req, res) => {
     const result = await pool
       .request()
       .input("movMovimiento", sql.Int, nextId) // Nuevo parámetro para MOV_Movimiento
-      .input("movId", sql.NVarChar(50), MOV_id)
+      .input("movId", sql.Char(10), MOV_id)
       .input("descripcion", sql.NVarChar(100), MOV_Descripcion || '')
       .input("valor", sql.Decimal(18, 2), MOV_Valor || 0)
       .input("fechaMov", sql.Date, MOV_Fecha_Mov || new Date())
@@ -170,7 +170,7 @@ export const updateMovimiento = async (req, res) => {
     // Verificar si el movimiento existe
     const checkExists = await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("SELECT COUNT(*) AS count FROM GCB_MOVIMIENTO WHERE MOV_Movimiento = @id");
 
     if (checkExists.recordset[0].count === 0) {
@@ -180,8 +180,8 @@ export const updateMovimiento = async (req, res) => {
     // Actualizar movimiento
     await pool
       .request()
-      .input("id", sql.Int, id)
-      .input("movId", sql.NVarChar(50), MOV_id)
+      .input("id", sql.Char(10), id)
+      .input("movId", sql.Char(10), MOV_id)
       .input("descripcion", sql.NVarChar(100), MOV_Descripcion || '')
       .input("valor", sql.Decimal(18, 2), MOV_Valor || 0)
       .input("fechaMov", sql.Date, MOV_Fecha_Mov || null)
@@ -221,7 +221,7 @@ export const deleteMovimiento = async (req, res) => {
     // Verificar si el movimiento existe
     const checkExists = await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("SELECT COUNT(*) AS count FROM GCB_MOVIMIENTO WHERE MOV_Movimiento = @id");
 
     if (checkExists.recordset[0].count === 0) {
@@ -232,7 +232,7 @@ export const deleteMovimiento = async (req, res) => {
     // Eliminar movimiento
     await pool
       .request()
-      .input("id", sql.Int, id)
+      .input("id", sql.Char(10), id)
       .query("DELETE FROM GCB_MOVIMIENTO WHERE MOV_Movimiento = @id");
     
     console.log("Movimiento eliminado correctamente");
