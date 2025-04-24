@@ -14,24 +14,113 @@ const sqlConfig = {
 
 export const getAllMovimientos = async (req, res) => {
   try {
+    console.log("Iniciando getAllMovimientos");
     const pool = await sql.connect(sqlConfig);
-    const result = await pool.request().query(`
-      SELECT 
-        m.*,
-        tm.TM_descripcion,
-        mon.MON_Nombre,
-        u.US_Nombre
-      FROM GCB_MOVIMIENTO m
-      LEFT JOIN GCB_TIPO_MOVIMIENTO tm ON m.TM_Tipomovimiento = tm.TM_Tipomovimiento
-      LEFT JOIN GCB_CUENTA_BANCARIA cb ON m.CUB_Cuentabancaria = cb.CUB_Cuentabancaria
-      LEFT JOIN GCB_MONEDA mon ON m.MON_Moneda = mon.MON_Moneda
-      LEFT JOIN GCB_USUARIOS u ON m.US_Usuario = u.US_Usuario
-      ORDER BY m.MOV_Fecha_Registro DESC
-    `);
-    res.json(result.recordset);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error al obtener los movimientos");
+    
+    try {
+      // 1. Consulta básica - obtenemos solo los datos de la tabla principal
+      const result = await pool.request().query(`
+        SELECT TOP 100 * FROM GCB_MOVIMIENTO 
+        ORDER BY MOV_Fecha_Registro DESC
+      `);
+      
+      console.log(`Recuperados ${result.recordset.length} movimientos básicos`);
+      
+      if (result.recordset.length > 0) {
+        // 2. Obtener datos de las tablas relacionadas
+        const tiposResult = await pool.request().query("SELECT * FROM GCB_TIPO_MOVIMIENTO");
+        const monedasResult = await pool.request().query("SELECT * FROM GCB_MONEDA");
+        const usuariosResult = await pool.request().query("SELECT * FROM GCB_USUARIOS");
+        const cuentasResult = await pool.request().query("SELECT * FROM GCB_CUENTA_BANCARIA");
+        
+        console.log(`Datos relacionados: ${tiposResult.recordset.length} tipos, ${monedasResult.recordset.length} monedas, ${usuariosResult.recordset.length} usuarios`);
+        
+        // 3. Crear mapas para búsqueda rápida con mejor manejo de tipos
+        const tiposMap = {};
+        tiposResult.recordset.forEach(t => {
+          // Extraer el número del ID si tiene formato "TM1001"
+          let numericKey = t.TM_Tipomovimiento;
+          if (typeof t.TM_Tipomovimiento === 'string' && t.TM_Tipomovimiento.includes('TM')) {
+            numericKey = parseInt(t.TM_Tipomovimiento.replace(/\D/g, ''));
+          }
+          // Guardar en el mapa usando el valor numérico como clave
+          tiposMap[numericKey] = t.TM_descripcion;
+        });
+
+        const monedasMap = {};
+        monedasResult.recordset.forEach(m => {
+          // Extraer el número del ID si tiene formato "MO1001"
+          let numericKey = m.MON_moneda;
+          if (typeof m.MON_moneda === 'string' && m.MON_moneda.includes('MO')) {
+            numericKey = parseInt(m.MON_moneda.replace(/\D/g, ''));
+          }
+          // Guardar en el mapa usando el valor numérico como clave
+          monedasMap[numericKey] = m.MON_nombre || m.MON_Nombre;
+        });
+
+        const usuariosMap = {};
+        usuariosResult.recordset.forEach(u => {
+          // Extraer el número del ID si tiene formato "US4"
+          let numericKey = u.US_Usuario;
+          if (typeof u.US_Usuario === 'string' && isNaN(parseInt(u.US_Usuario))) {
+            const match = u.US_Usuario.match(/\d+/);
+            if (match) {
+              numericKey = parseInt(match[0]);
+            }
+          }
+          // Guardar en el mapa usando el valor numérico como clave
+          usuariosMap[numericKey] = u.US_nombre || u.US_Nombre;
+        });
+
+        const cuentasMap = {};
+        cuentasResult.recordset.forEach(c => {
+          // Extraer el número del ID si tiene formato "CB1001"
+          let numericKey = c.CUB_Cuentabancaria;
+          if (typeof c.CUB_Cuentabancaria === 'string' && c.CUB_Cuentabancaria.includes('CB')) {
+            numericKey = parseInt(c.CUB_Cuentabancaria.replace(/\D/g, ''));
+          }
+          // Guardar en el mapa usando el valor numérico como clave
+          cuentasMap[numericKey] = c.CUB_Nombre;
+        });
+
+        // Añadir depuración para ver qué claves se han creado
+        console.log("Claves en tiposMap:", Object.keys(tiposMap));
+        console.log("Claves en monedasMap:", Object.keys(monedasMap));
+        console.log("Claves en usuariosMap:", Object.keys(usuariosMap));
+        
+        // 4. Enriquecer los datos
+        const enrichedData = result.recordset.map(m => {
+          return {
+            ...m,
+            TM_descripcion: tiposMap[m.TM_Tipomovimiento] || "Sin especificar",
+            MON_Nombre: monedasMap[m.MON_Moneda] || "Sin especificar",
+            US_Nombre: usuariosMap[m.US_Usuario] || "Sin especificar",
+            CUB_NombreCompleto: cuentasMap[m.CUB_Cuentabancaria] || "Sin especificar"
+          };
+        });
+        
+        // 5. Mostrar un ejemplo del resultado para diagnóstico
+        if (enrichedData.length > 0) {
+          console.log("Ejemplo de registro enriquecido:", {
+            id: enrichedData[0].MOV_id?.trim(),
+            tipo: enrichedData[0].TM_descripcion,
+            moneda: enrichedData[0].MON_Nombre,
+            usuario: enrichedData[0].US_Nombre
+          });
+        }
+        
+        return res.json(enrichedData);
+      } else {
+        // No hay datos que mostrar
+        return res.json([]);
+      }
+    } catch (basicQueryError) {
+      console.error("Error en consulta básica:", basicQueryError);
+      res.status(500).send(`Error al obtener los datos: ${basicQueryError.message}`);
+    }
+  } catch (error) {
+    console.error("Error general en getAllMovimientos:", error);
+    res.status(500).send(`Error al obtener los movimientos: ${error.message}`);
   }
 };
 

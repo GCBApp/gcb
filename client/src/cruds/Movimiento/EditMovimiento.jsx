@@ -3,15 +3,24 @@ import { useState, useEffect } from "react";
 const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 function EditMovimiento({ initialData, onCancel, onSuccess }) {
-  // Set today's date as default right in the initial state
-  const today = new Date().toISOString().split('T')[0];
+  // Manejo de fechas
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return new Date().toISOString().split('T')[0];
+    // Si la fecha ya está en formato ISO o similar, extraer solo YYYY-MM-DD
+    if (dateString.includes('T') || dateString.includes('-')) {
+      return dateString.split('T')[0];
+    }
+    // Para otros formatos de fecha, convertir a Date y luego a string YYYY-MM-DD
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
   
   const [formData, setFormData] = useState({
     MOV_id: "",
     MOV_Descripcion: "",
     MOV_Valor: "",
-    MOV_Fecha_Mov: today, // Initialize with today's date
-    MOV_Fecha_Registro: today, // Initialize with today's date
+    MOV_Fecha_Mov: new Date().toISOString().split('T')[0],
+    MOV_Fecha_Registro: new Date().toISOString().split('T')[0],
     US_Usuario: "",
     MON_Moneda: "",
     TM_Tipomovimiento: "",
@@ -25,29 +34,41 @@ function EditMovimiento({ initialData, onCancel, onSuccess }) {
   const [monedas, setMonedas] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Cargar datos iniciales
+  // Extraer ID numérico
+  const extractNumericId = (id) => {
+    if (id === null || id === undefined) return null;
+    if (typeof id === 'number') return id;
+    // Extraer solo los dígitos del string
+    const match = String(id).match(/\d+/);
+    return match ? parseInt(match[0]) : null;
+  };
+  
+  // Cargar datos iniciales del movimiento
   useEffect(() => {
     if (initialData) {
-      // Get today's date
-      const currentDate = new Date().toISOString().split('T')[0];
+      console.log("Datos iniciales para edición:", initialData);
       
-      // Create a new form with blank fields but today's date
+      // Extraer IDs numéricos si tienen prefijos
+      const userID = extractNumericId(initialData.US_Usuario);
+      const monedaID = extractNumericId(initialData.MON_Moneda);
+      const tipoMovID = extractNumericId(initialData.TM_Tipomovimiento);
+      const cuentaID = extractNumericId(initialData.CUB_Cuentabancaria);
+      
       setFormData({
-        // Reset all fields to blank
-        MOV_id: "",
-        MOV_Descripcion: "",
-        MOV_Valor: "",
-        MOV_Fecha_Mov: currentDate, // Use today's date
-        MOV_Fecha_Registro: currentDate, // Use today's date
-        US_Usuario: "",
-        MON_Moneda: "",
-        TM_Tipomovimiento: "",
-        CUB_Cuentabancaria: ""
+        MOV_id: initialData.MOV_id?.trim() || "",
+        MOV_Descripcion: initialData.MOV_Descripcion || "",
+        MOV_Valor: initialData.MOV_Valor || "",
+        MOV_Fecha_Mov: formatDateForInput(initialData.MOV_Fecha_Mov),
+        MOV_Fecha_Registro: formatDateForInput(initialData.MOV_Fecha_Registro),
+        US_Usuario: userID,
+        MON_Moneda: monedaID, 
+        TM_Tipomovimiento: tipoMovID,
+        CUB_Cuentabancaria: cuentaID
       });
     }
   }, [initialData]);
 
-  // Cargar datos relacionados
+  // Cargar datos relacionados y procesarlos
   useEffect(() => {
     const fetchRelatedData = async () => {
       try {
@@ -56,22 +77,59 @@ function EditMovimiento({ initialData, onCancel, onSuccess }) {
         // Obtener tipos de movimiento
         const resTipos = await fetch(`${API_URL}/api/tipoMovimiento`);
         const dataTipos = await resTipos.json();
-        setTiposMovimiento(dataTipos);
+        console.log("Tipos de movimiento:", dataTipos);
+        
+        // Procesarlos para extraer ID numérico
+        const tiposMovimientoProcesados = dataTipos.map(tm => {
+          const numericId = extractNumericId(tm.TM_Tipomovimiento);
+          return {
+            ...tm,
+            numericId: numericId
+          };
+        });
+        setTiposMovimiento(tiposMovimientoProcesados);
         
         // Obtener cuentas bancarias
         const resCuentas = await fetch(`${API_URL}/api/cuentasBancarias`);
         const dataCuentas = await resCuentas.json();
-        setCuentasBancarias(dataCuentas);
+        
+        // Procesarlas para extraer ID numérico
+        const cuentasBancariasProcesadas = dataCuentas.map(cb => {
+          const numericId = extractNumericId(cb.CUB_Cuentabancaria);
+          return {
+            ...cb,
+            numericId: numericId
+          };
+        });
+        setCuentasBancarias(cuentasBancariasProcesadas);
         
         // Obtener usuarios
         const resUsuarios = await fetch(`${API_URL}/api/usuario`);
         const dataUsuarios = await resUsuarios.json();
-        setUsuarios(dataUsuarios);
+        
+        // Procesarlos para extraer ID numérico
+        const usuariosProcesados = dataUsuarios.map(u => {
+          const numericId = extractNumericId(u.US_Usuario || u.US_usuario);
+          return {
+            ...u,
+            numericId: numericId
+          };
+        });
+        setUsuarios(usuariosProcesados);
         
         // Obtener monedas
         const resMonedas = await fetch(`${API_URL}/api/moneda`);
         const dataMonedas = await resMonedas.json();
-        setMonedas(dataMonedas);
+        
+        // Procesarlas para extraer ID numérico
+        const monedasProcesadas = dataMonedas.map(m => {
+          const numericId = extractNumericId(m.MON_moneda);
+          return {
+            ...m,
+            numericId: numericId
+          };
+        });
+        setMonedas(monedasProcesadas);
         
         setLoading(false);
       } catch (err) {
@@ -86,23 +144,47 @@ function EditMovimiento({ initialData, onCancel, onSuccess }) {
 
   // Manejar cambios en el formulario
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    
+    // Para los campos que requieren valor numérico, convertir a número
+    if ((name === "US_Usuario" || name === "MON_Moneda" || 
+         name === "TM_Tipomovimiento" || name === "CUB_Cuentabancaria") && value !== "") {
+      const numValue = parseInt(value);
+      setFormData({ ...formData, [name]: numValue });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   // Manejar el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Crear una copia para poder modificarla
+      const dataToSend = { ...formData };
+      
+      // Asegurarse de que los campos sean números si tienen valor
+      const numericFields = ["US_Usuario", "MON_Moneda", "TM_Tipomovimiento", "CUB_Cuentabancaria"];
+      
+      numericFields.forEach(field => {
+        if (dataToSend[field] && typeof dataToSend[field] !== 'number') {
+          dataToSend[field] = parseInt(dataToSend[field]);
+        }
+      });
+      
+      console.log("Datos a enviar para actualizar:", dataToSend);
+      
       const res = await fetch(`${API_URL}/api/movimiento/${initialData.MOV_Movimiento}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSend),
       });
 
       if (res.ok) {
         onSuccess(); // Regresar a la tabla
       } else {
         const errorText = await res.text();
+        console.error("Error al actualizar:", errorText);
         setErrorMessage(errorText);
       }
     } catch (err) {
@@ -182,8 +264,8 @@ function EditMovimiento({ initialData, onCancel, onSuccess }) {
           >
             <option value="">Seleccione un tipo</option>
             {tiposMovimiento.map((tipo) => (
-              <option key={tipo.TM_Tipomovimiento} value={tipo.TM_Tipomovimiento}>
-                {tipo.TM_descripcion}
+              <option key={tipo.TM_Tipomovimiento} value={tipo.numericId}>
+                {tipo.TM_descripcion} ({tipo.TM_Tipomovimiento})
               </option>
             ))}
           </select>
@@ -199,7 +281,7 @@ function EditMovimiento({ initialData, onCancel, onSuccess }) {
           >
             <option value="">Seleccione una cuenta</option>
             {cuentasBancarias.map((cuenta) => (
-              <option key={cuenta.CUB_Cuentabancaria} value={cuenta.CUB_Cuentabancaria}>
+              <option key={cuenta.CUB_Cuentabancaria} value={cuenta.numericId}>
                 {cuenta.CUB_Numero || cuenta.CUB_Número} - {cuenta.CUB_Nombre}
               </option>
             ))}
@@ -215,8 +297,8 @@ function EditMovimiento({ initialData, onCancel, onSuccess }) {
           >
             <option value="">Seleccione una moneda</option>
             {monedas.map((moneda) => (
-              <option key={moneda.MON_moneda} value={moneda.MON_moneda}>
-                {moneda.MON_nombre} {/* Ajustado para usar MON_nombre en minúscula */}
+              <option key={moneda.MON_moneda} value={moneda.numericId}>
+                {moneda.MON_nombre || moneda.MON_Nombre} ({moneda.MON_moneda})
               </option>
             ))}
           </select>
@@ -231,8 +313,8 @@ function EditMovimiento({ initialData, onCancel, onSuccess }) {
           >
             <option value="">Seleccione un usuario</option>
             {usuarios.map((usuario) => (
-              <option key={usuario.US_usuario} value={usuario.US_usuario}>
-                {usuario.US_nombre} {/* Ajustado para usar US_nombre en minúscula */}
+              <option key={usuario.US_Usuario || usuario.US_usuario} value={usuario.numericId}>
+                {usuario.US_nombre || usuario.US_Nombre} ({usuario.US_Usuario || usuario.US_usuario})
               </option>
             ))}
           </select>
