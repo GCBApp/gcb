@@ -103,3 +103,18 @@ export const deleteEstado = async (req, res) => {
     res.status(500).send("Error al eliminar el estado");
   }
 };
+
+export const getEstadosByCompensacion = async (req, res) => {
+  try {
+    const { compensacionId } = req.params;
+    const pool = await sql.connect(sqlConfig);
+    const result = await pool
+      .request()
+      .input("compensacionId", sql.Char(10), compensacionId)
+      .query("SELECT * FROM GCB_ESTADO WHERE COM_Compensacion = @compensacionId");
+    res.json(result.recordset);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error al obtener los estados por compensación");
+  }
+};

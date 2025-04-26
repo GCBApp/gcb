@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import AddCompensacion from "./AddCompensacion";
 import EditCompensacion from "./EditCompensacion";
 import ConfirmDelete from "./ConfirmDeleteCompensacion";
+import ProcessCompensacion from "./ProcessCompensacion"; // Importar el nuevo componente
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
@@ -9,12 +10,15 @@ function Compensacion() {
   const [compensacion, setCompensacion] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
+  const [showProcessForm, setShowProcessForm] = useState(false); // Nuevo estado
   const [editData, setEditData] = useState(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showDetails, setShowDetails] = useState(false);
+  const [selectedCompensacionId, setSelectedCompensacionId] = useState(null);
 
-  // Obtener todos los bancos
+  // Obtener todos las compensaciones
   const fetchcompensacion = async () => {
     try {
       const res = await fetch(`${API_URL}/api/compensacion`);
@@ -25,7 +29,7 @@ function Compensacion() {
     }
   };
 
-  // Eliminar un banco
+  // Eliminar una compensación
   const deleteCompensacion = async () => {
     if (!deleteId) {
       console.error("No hay ID para eliminar");
@@ -42,30 +46,26 @@ function Compensacion() {
         setCompensacion((prev) => prev.filter((item) => item.COM_Compensacion !== deleteId));
         setShowConfirmDelete(false);
         setDeleteId(null);
-        setErrorMessage(""); // Limpiar cualquier mensaje de error previo
+        setErrorMessage("");
       } else {
         const errorText = await res.text();
         console.error("Error al eliminar compensacion:", errorText);
-        setShowConfirmDelete(false); // Cerrar la ventana de confirmación
+        setShowConfirmDelete(false);
         setErrorMessage("No se puede eliminar el registro porque está relacionado con otros datos.");
-        setTimeout(() => setErrorMessage(""), 3000); // Ocultar el mensaje después de 3 segundos
+        setTimeout(() => setErrorMessage(""), 3000);
       }
     } catch (err) {
       console.error("Error al eliminar el banco:", err);
-      setShowConfirmDelete(false); // Cerrar la ventana de confirmación
+      setShowConfirmDelete(false);
       setErrorMessage("Ocurrió un error al intentar eliminar el registro.");
-      setTimeout(() => setErrorMessage(""), 3000); // Ocultar el mensaje después de 3 segundos
+      setTimeout(() => setErrorMessage(""), 3000);
     }
   };
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
-
-  // Crear un objeto Date desde la cadena de fecha
-  const [year, month, day] = dateString.split("T")[0].split("-");
-
-  // Formatear la fecha en formato local (DD/MM/YYYY)
-  return `${day}/${month}/${year}`;
+    const [year, month, day] = dateString.split("T")[0].split("-");
+    return `${day}/${month}/${year}`;
   };
 
   // Cargar datos al montar el componente
@@ -80,7 +80,7 @@ function Compensacion() {
           onCancel={() => setShowAddForm(false)}
           onSuccess={() => {
             setShowAddForm(false);
-            fetchcompensacion(); // Actualizar la tabla después de agregar
+            fetchcompensacion();
           }}
         />
       ) : showEditForm ? (
@@ -89,13 +89,37 @@ function Compensacion() {
           onCancel={() => setShowEditForm(false)}
           onSuccess={() => {
             setShowEditForm(false);
-            fetchcompensacion(); // Actualizar la tabla después de editar
+            fetchcompensacion();
+          }}
+        />
+      ) : showProcessForm ? (
+        <ProcessCompensacion
+          onCancel={() => setShowProcessForm(false)}
+          onSuccess={() => {
+            setShowProcessForm(false);
+            fetchcompensacion();
+          }}
+        />
+      ) : showDetails ? (
+        <DetalleCompensacion
+          compensacionId={selectedCompensacionId}
+          onClose={() => {
+            setShowDetails(false);
+            setSelectedCompensacionId(null);
           }}
         />
       ) : (
         <>
           <h2>Compensaciones</h2>
-          <button onClick={() => setShowAddForm(true)}>Agregar</button>
+          <div>
+            <button onClick={() => setShowAddForm(true)}>Agregar</button>
+            <button 
+              onClick={() => setShowProcessForm(true)}
+              style={{ marginLeft: '10px', backgroundColor: '#4CAF50', color: 'white' }}
+            >
+              Procesar Compensación
+            </button>
+          </div>
           {errorMessage && (
             <div style={{ color: "red", marginTop: "10px" }}>
               <strong>{errorMessage}</strong>
@@ -109,6 +133,7 @@ function Compensacion() {
                 <th>Fecha</th>
                 <th>Tipo</th>
                 <th>Valor</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -135,6 +160,15 @@ function Compensacion() {
                       }}
                     >
                       Eliminar
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedCompensacionId(item.COM_Compensacion);
+                        setShowDetails(true);
+                      }}
+                      style={{ backgroundColor: '#007BFF', color: 'white' }}
+                    >
+                      Detalles
                     </button>
                   </td>
                 </tr>
