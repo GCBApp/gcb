@@ -1,23 +1,28 @@
-import { useState } from "react";
-import "./App.css";
-import TableList from "./components/CrudList";
-
-const URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import HomePage from "./pages/HomePage";
+import AccountsPage from "./pages/AccountsPage";
+import MovementsPage from "./pages/MovementsPage";
+import ProfilePage from "./pages/ProfilePage";
+import CrudPage from "./pages/CrudPage";
 
 function App() {
-  const [showTables, setShowTables] = useState(false);
-
   return (
-    <div className="App">
-      <h1>GCB App</h1>
-      <br />
-      <br />
-      {showTables ? (
-        <TableList />
-      ) : (
-        <button onClick={() => setShowTables(true)}>Ver tablas</button>
-      )}
-    </div>
+    <Router>
+      <div className="app-container">
+        <Navbar />
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/accounts" element={<AccountsPage />} />
+            <Route path="/movements" element={<MovementsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/cruds" element={<CrudPage />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
 }
 

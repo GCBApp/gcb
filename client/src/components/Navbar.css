@@ -1,0 +1,35 @@
+.navbar {
+  position: fixed; /* Fija la barra de navegación en la parte superior de la pantalla */
+  top: 0; /* Posiciona la barra en la parte superior */
+  left: 0; /* Alinea la barra al borde izquierdo */
+  width: 100%; /* Hace que la barra ocupe todo el ancho de la pantalla */
+  display: flex; /* Usa flexbox para alinear los elementos */
+  justify-content: space-between; /* Distribuye los elementos con espacio entre ellos */
+  align-items: center; /* Alinea los elementos verticalmente al centro */
+  padding: 10px 20px; /* Agrega espacio interno alrededor de los elementos */
+  background-color: #f8f9fa; /* Establece el color de fondo de la barra */
+  border-bottom: 1px solid #ddd; /* Agrega un borde inferior */
+  z-index: 1000; /* Asegura que la barra esté encima de otros elementos */
+}
+
+.logo {
+  font-size: 1.5rem; /* Define el tamaño del texto del logo */
+  font-weight: bold; /* Hace que el texto del logo sea más grueso */
+  color: #333; /* Establece el color del texto del logo */
+}
+
+.nav-links {
+  list-style: none; /* Elimina los puntos de la lista */
+  display: flex; /* Usa flexbox para alinear los enlaces */
+  gap: 15px; /* Agrega espacio entre los enlaces */
+}
+
+.nav-links li a {
+  text-decoration: none; /* Elimina el subrayado de los enlaces */
+  color: #333; /* Establece el color del texto de los enlaces */
+  font-size: 1rem; /* Define el tamaño del texto de los enlaces */
+}
+
+.nav-links li a:hover {
+  color: #007bff; /* Cambia el color del texto al pasar el cursor */
+}
