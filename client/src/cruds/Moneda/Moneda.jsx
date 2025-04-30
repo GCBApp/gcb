@@ -13,25 +13,7 @@ function Moneda() {
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
-
-// Actualizar tipos de cambio manualmente
-const updateExchangeRates = async () => {
-  try {
-    const res = await fetch(`${API_URL}/api/moneda/update-exchange-rates`, {
-      method: "POST",
-    });
-    if (res.ok) {
-      console.log("Tipos de cambio actualizados correctamente.");
-      fetchMonedas(); // Refrescar la lista de monedas automáticamente
-    } else {
-      console.error("Error al actualizar los tipos de cambio.");
-    }
-  } catch (err) {
-    console.error("Error al actualizar los tipos de cambio:", err);
-  }
-};
-
-
+  const [loadingMessage, setLoadingMessage] = useState(null); // Mensaje de carga
 
   // Obtener todas las monedas
   const fetchMonedas = async () => {
@@ -44,6 +26,29 @@ const updateExchangeRates = async () => {
     }
   };
 
+  // Actualizar tipos de cambio manualmente
+  const updateExchangeRates = async () => {
+    try {
+      setLoadingMessage("Actualizando tipos de cambio, por favor espere..."); // Mostrar mensaje de carga
+      const res = await fetch(`${API_URL}/api/moneda/update-exchange-rates`, {
+        method: "POST",
+      });
+      if (res.ok) {
+        console.log("Tipos de cambio actualizados correctamente.");
+        await fetchMonedas(); // Refrescar la lista de monedas automáticamente
+        setLoadingMessage("Tipos de cambio actualizados exitosamente."); // Mostrar mensaje de éxito
+        setTimeout(() => setLoadingMessage(null), 3000); // Ocultar mensaje después de 3 segundos
+      } else {
+        console.error("Error al actualizar los tipos de cambio.");
+        setLoadingMessage("Error al actualizar los tipos de cambio."); // Mostrar mensaje de error
+        setTimeout(() => setLoadingMessage(null), 3000); // Ocultar mensaje después de 3 segundos
+      }
+    } catch (err) {
+      console.error("Error al actualizar los tipos de cambio:", err);
+      setLoadingMessage("Error al actualizar los tipos de cambio."); // Mostrar mensaje de error
+      setTimeout(() => setLoadingMessage(null), 3000); // Ocultar mensaje después de 3 segundos
+    }
+  };
 
   // Eliminar una moneda
   const deleteMoneda = async () => {
@@ -85,6 +90,38 @@ const updateExchangeRates = async () => {
 
   return (
     <div>
+      {loadingMessage && (
+        <div
+          style={{
+            position: "fixed",
+            top: "0",
+            left: "0",
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#fff",
+              padding: "20px",
+              borderRadius: "8px",
+              textAlign: "center",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+              color: "#000",
+              fontSize: "18px",
+              fontWeight: "bold",
+            }}
+          >
+            {loadingMessage}
+          </div>
+        </div>
+      )}
+
       {showAddForm ? (
         <AddMoneda
           onCancel={() => setShowAddForm(false)}
