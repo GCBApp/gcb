@@ -1,29 +1,18 @@
 import { Router } from "express";
-import {
-  getAllMovimientos,
-  getMovimientoById,
-  createMovimiento,
-  updateMovimiento,
-  deleteMovimiento,
-  getTiposMovimiento,
-  getCuentasBancarias,
-  getUsuarios,
-  getMonedas
-} from "./movimiento.controller.js";
+import { getAllMovimientos, createMovimiento, updateMovimiento, deleteMovimiento } from "./movimiento.controller.js";
 
 const router = Router();
 
-// Rutas principales CRUD
+// Ruta para listar movimientos
 router.get("/", getAllMovimientos);
-router.get("/:id", getMovimientoById);
-router.post("/", createMovimiento);
-router.put("/:id", updateMovimiento);
-router.delete("/:id", deleteMovimiento);
 
-// Rutas para obtener información relacionada
-router.get("/datos/tiposMovimiento", getTiposMovimiento);
-router.get("/datos/cuentasBancarias", getCuentasBancarias);
-router.get("/datos/usuarios", getUsuarios);
-router.get("/datos/monedas", getMonedas);
+// Ruta para crear movimiento
+router.post("/", createMovimiento);
+
+// Ruta para editar movimiento
+router.put("/:id", updateMovimiento);
+
+// Ruta para eliminar movimiento
+router.delete("/:id", deleteMovimiento);
 
 export default router;
