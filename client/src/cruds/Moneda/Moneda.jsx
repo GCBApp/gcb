@@ -14,6 +14,25 @@ function Moneda() {
   const [deleteId, setDeleteId] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
 
+// Actualizar tipos de cambio manualmente
+const updateExchangeRates = async () => {
+  try {
+    const res = await fetch(`${API_URL}/api/moneda/update-exchange-rates`, {
+      method: "POST",
+    });
+    if (res.ok) {
+      console.log("Tipos de cambio actualizados correctamente.");
+      fetchMonedas(); // Refrescar la lista de monedas automáticamente
+    } else {
+      console.error("Error al actualizar los tipos de cambio.");
+    }
+  } catch (err) {
+    console.error("Error al actualizar los tipos de cambio:", err);
+  }
+};
+
+
+
   // Obtener todas las monedas
   const fetchMonedas = async () => {
     try {
@@ -24,6 +43,7 @@ function Moneda() {
       console.error("Error al obtener las monedas:", err);
     }
   };
+
 
   // Eliminar una moneda
   const deleteMoneda = async () => {
@@ -70,7 +90,7 @@ function Moneda() {
           onCancel={() => setShowAddForm(false)}
           onSuccess={() => {
             setShowAddForm(false);
-            fetchMonedas(); // Actualizar la tabla después de agregar
+            fetchMonedas();
           }}
         />
       ) : showEditForm ? (
@@ -79,13 +99,16 @@ function Moneda() {
           onCancel={() => setShowEditForm(false)}
           onSuccess={() => {
             setShowEditForm(false);
-            fetchMonedas(); // Actualizar la tabla después de editar
+            fetchMonedas();
           }}
         />
       ) : (
         <>
           <h2>Moneda</h2>
           <button onClick={() => setShowAddForm(true)}>Agregar</button>
+          <button onClick={updateExchangeRates} style={{ marginLeft: "10px" }}>
+            Actualizar Tipos de Cambio
+          </button>
           {errorMessage && (
             <div style={{ color: "red", marginTop: "10px" }}>
               <strong>{errorMessage}</strong>
@@ -96,7 +119,10 @@ function Moneda() {
               <tr>
                 <th>ID</th>
                 <th>Nombre</th>
-                <th>Valor</th>
+                <th>Compra</th>
+                <th>Venta</th>
+                <th>Fecha</th>
+                <th>ID Banguat</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -105,7 +131,10 @@ function Moneda() {
                 <tr key={item.MON_moneda}>
                   <td>{item.MON_moneda}</td>
                   <td>{item.MON_nombre}</td>
-                  <td>{parseFloat(item.MON_valor).toFixed(5)}</td> {/* Mostrar con 5 decimales */}
+                  <td>{parseFloat(item.MON_Tipo_Compra).toFixed(5)}</td>
+                  <td>{parseFloat(item.MON_Tipo_Venta).toFixed(5)}</td>
+                  <td>{item.MON_Fecha_Mov}</td>
+                  <td>{item.MON_id_Banguat}</td>
                   <td>
                     <button
                       onClick={() => {

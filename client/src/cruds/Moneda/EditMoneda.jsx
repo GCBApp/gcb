@@ -48,11 +48,28 @@ function EditMoneda({ initialData, onCancel, onSuccess }) {
         />
         <input
           type="number"
-          name="MON_valor"
-          placeholder="Valor"
-          value={formData.MON_valor}
+          name="MON_Tipo_Compra"
+          placeholder="Tipo de Compra"
+          value={formData.MON_Tipo_Compra}
           onChange={handleChange}
           step="0.00001" // Permitir hasta 5 decimales
+          required
+        />
+        <input
+          type="number"
+          name="MON_Tipo_Venta"
+          placeholder="Tipo de Venta"
+          value={formData.MON_Tipo_Venta}
+          onChange={handleChange}
+          step="0.00001" // Permitir hasta 5 decimales
+          required
+        />
+        <input
+          type="number"
+          name="MON_id_Banguat"
+          placeholder="ID Banguat"
+          value={formData.MON_id_Banguat}
+          onChange={handleChange}
           required
         />
         <button type="submit">Actualizar</button>

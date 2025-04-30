@@ -3,7 +3,7 @@ import { useState } from "react";
 const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 function AddMoneda({ onCancel, onSuccess }) {
-  const [formData, setFormData] = useState({ MON_moneda: "", MON_nombre: "", MON_valor: "" });
+  const [formData, setFormData] = useState({ MON_moneda: "", MON_nombre: "", MON_Tipo_Compra: "", MON_Tipo_Venta: "", MON_id_Banguat: "" });
   const [errorMessage, setErrorMessage] = useState("");
 
   // Manejar cambios en el formulario
@@ -60,11 +60,28 @@ function AddMoneda({ onCancel, onSuccess }) {
         />
         <input
           type="number"
-          name="MON_valor"
-          placeholder="Valor"
-          value={formData.MON_valor}
+          name="MON_Tipo_Compra"
+          placeholder="Tipo de Compra"
+          value={formData.MON_Tipo_Compra}
           onChange={handleChange}
           step="0.00001" // Permitir hasta 5 decimales
+          required
+        />
+        <input
+          type="number"
+          name="MON_Tipo_Venta"
+          placeholder="Tipo de Venta"
+          value={formData.MON_Tipo_Venta}
+          onChange={handleChange}
+          step="0.00001" // Permitir hasta 5 decimales
+          required
+        />
+        <input
+          type="number"
+          name="MON_id_Banguat"
+          placeholder="ID Banguat"
+          value={formData.MON_id_Banguat}
+          onChange={handleChange}
           required
         />
         <button type="submit">Agregar</button>
