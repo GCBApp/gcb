@@ -34,6 +34,12 @@ const sqlConfig = {
     encrypt: true, // Usar en conexiones seguras
     trustServerCertificate: true, // Usar si no tienes un certificado SSL
   },
+  requestTimeout: 60000, // Aumenta el tiempo de espera a 60 segundos
+  pool: {
+    max: 10, // Número máximo de conexiones en el pool
+    min: 0, // Número mínimo de conexiones en el pool
+    idleTimeoutMillis: 30000, // Tiempo de espera para cerrar conexiones inactivas
+  },
 };
 
 app.use(express.json()); // Middleware para procesar JSON
@@ -64,7 +70,10 @@ app.get("/ping", async (req, res) => {
     });
   } catch (err) {
     console.error("Error al conectar a SQL Server:", err);
-    res.status(500).send("Error al conectar a la base de datos");
+    res.status(500).send({
+      error: "Error al conectar a la base de datos",
+      details: err.message,
+    });
   }
 });
 
