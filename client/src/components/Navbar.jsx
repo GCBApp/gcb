@@ -6,7 +6,7 @@ import "./Navbar.css";
 const Navbar = () => {
   const { isAuthenticated, setIsAuthenticated } = useAuth();
 
-  if (!isAuthenticated) return null; // No renderizar el Navbar si no está autenticado
+  if (isAuthenticated) return null; // No renderizar el Navbar si no está autenticado
   
   const handleLogout = () => {
     setIsAuthenticated(false); // Cambiar el estado de autenticación a falso
