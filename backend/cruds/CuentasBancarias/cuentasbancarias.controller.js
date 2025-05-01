@@ -15,10 +15,22 @@ const sqlConfig = {
 export const getAllCuentas = async (req, res) => {
   try {
     const pool = await sql.connect(sqlConfig);
-    const result = await pool.request().query("SELECT * FROM GCB_CUENTA_BANCARIA");
+    const result = await pool.request().query(`
+      SELECT 
+        cb.CUB_Cuentabancaria,
+        cb.CUB_Nombre,
+        cb.CUB_Tipo,
+        cb.CUB_Número,
+        cb.CUB_saldo,
+        cb.MON_Moneda,
+        b.BAN_Nombre AS Banco_Nombre,
+        b.BAN_Pais AS Banco_Pais
+      FROM GCB_CUENTA_BANCARIA cb
+      INNER JOIN GCB_BANCOS b ON cb.BAN_Banco = b.BAN_bancos
+    `);
     res.json(result.recordset);
   } catch (err) {
-    console.error(err);
+    console.error("Error al obtener cuentas:", err);
     res.status(500).send("Error al obtener cuentas");
   }
 };
@@ -65,7 +77,7 @@ export const createCuenta = async (req, res) => {
       .input("cuenta", sql.Char(10), CUB_Cuentabancaria)
       .input("nombre", sql.VarChar, CUB_Nombre)
       .input("tipo", sql.VarChar, CUB_Tipo)
-      .input("banco", sql.Int, BAN_banco)
+      .input("banco", sql.Char(10), BAN_banco)
       .input("moneda", sql.VarChar, MON_moneda)
       .input("Número", sql.Int, CUB_Número)
       .input("saldo", sql.Int, CUB_saldo)
@@ -96,7 +108,7 @@ export const updateCuenta = async (req, res) => {
       .input("cuenta", sql.Char(10), CUB_Cuentabancaria)
       .input("nombre", sql.VarChar, CUB_Nombre)
       .input("tipo", sql.VarChar, CUB_Tipo)
-      .input("banco", sql.Int, BAN_banco)
+      .input("banco", sql.Char(10), BAN_banco)
       .input("moneda", sql.VarChar, MON_moneda)
       .input("Número", sql.Int, CUB_Número)
       .input("saldo", sql.Int, CUB_saldo)

@@ -39,7 +39,7 @@ export const getAllMovimientos = async (req, res) => {
       JOIN 
           GCB_CUENTA_BANCARIA CB ON M.CUB_Cuentabancaria = CB.CUB_Cuentabancaria
       ORDER BY 
-          M.MOV_Fecha_Mov DESC
+          M.MOV_Movimiento ASC
     `);
     res.json(result.recordset);
   } catch (err) {
@@ -56,8 +56,12 @@ export const createMovimiento = async (req, res) => {
     if (!MOV_Movimiento || !US_Usuario || !MON_Moneda || !TM_Tipomovimiento || !CUB_Cuentabancaria) {
       return res.status(400).send("Faltan datos requeridos.");
     }
+    
 
     const pool = await sql.connect(sqlConfig);
+
+
+
     await pool.request()
       .input("movimiento", sql.VarChar(50), MOV_Movimiento) // MOV_Movimiento como llave primaria
       .input("id", sql.VarChar(50), MOV_id)
@@ -73,6 +77,15 @@ export const createMovimiento = async (req, res) => {
         INSERT INTO GCB_MOVIMIENTO (MOV_Movimiento, MOV_id, US_Usuario, MON_Moneda, TM_Tipomovimiento, CUB_Cuentabancaria, MOV_Descripcion, MOV_Fecha_Mov, MOV_Fecha_Registro, MOV_Valor)
         VALUES (@movimiento, @id, @usuario, @moneda, @tipoMovimiento, @cuentaBancaria, @descripcion, @fechaMov, @fechaRegistro, @valor)
       `);
+
+      await pool.request()
+        .input("CUB_Cuentabancaria", sql.VarChar(50), CUB_Cuentabancaria)
+        .input("MOV_Valor", sql.Decimal(18, 2), MOV_Valor)
+        .query(`
+          UPDATE GCB_CUENTA_BANCARIA
+          SET CUB_saldo = CUB_saldo + @MOV_Valor
+          WHERE CUB_Cuentabancaria = @CUB_Cuentabancaria
+        `);
 
     res.status(201).send("Movimiento creado.");
   } catch (err) {

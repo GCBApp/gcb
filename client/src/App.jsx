@@ -6,23 +6,30 @@ import AccountsPage from "./pages/AccountsPage";
 import MovementsPage from "./pages/MovementsPage";
 import ProfilePage from "./pages/ProfilePage";
 import CrudPage from "./pages/CrudPage";
+import Login from "./views/Login";
+import UserInfo from "./views/UserInfo";
+import MovimientoResumen from "./views/Carga";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
 function App() {
   return (
-    <Router>
-      <div className="app-container">
-        <Navbar />
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/accounts" element={<AccountsPage />} />
-            <Route path="/movements" element={<MovementsPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/cruds" element={<CrudPage />} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <div className="app-container">
+          <Navbar />
+          <main className="main-content">
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/HomePage" element={<HomePage />} />
+              <Route path="/accounts" element={<AccountsPage />} />
+              <Route path="/carga" element={<MovimientoResumen />} />
+              <Route path="/profile" element={<UserInfo />} />
+              <Route path="/cruds" element={<CrudPage />} />
+            </Routes>
+          </main>
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
 

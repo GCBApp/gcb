@@ -17,16 +17,19 @@ export const getAllUsuarios = async (req, res) => {
     const pool = await sql.connect(sqlConfig);
     const result = await pool.request().query(`
       SELECT 
-        US_usuario, 
-        TU_tipousuario, 
-        US_nombre, 
-        US_correo, 
-        US_contraseña
-      FROM GCB_USUARIOS
+        U.US_usuario, 
+        U.TU_tipousuario, 
+        U.US_nombre, 
+        U.US_correo, 
+        U.US_contraseña,
+        T.TU_descripcion
+      FROM GCB_USUARIOS U
+      INNER JOIN GCB_TIPOS_USUARIOS T
+      ON U.TU_tipousuario = T.TU_tipousuario
     `);
     res.json(result.recordset);
   } catch (err) {
-    console.error(err);
+    console.error("Error al obtener los usuarios:",err);
     res.status(500).send("Error al obtener usuarios");
   }
 };
