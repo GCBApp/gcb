@@ -15,17 +15,19 @@
 
 body {
   margin: 0; /* Elimina el margen predeterminado del cuerpo */
+  width: 100%; /* Asegura que el cuerpo ocupe todo el ancho */
+  height: 100%; /* Asegura que el cuerpo ocupe toda la altura */
   display: flex; /* Usa flexbox para alinear los elementos */
   flex-direction: column; /* Asegura que los elementos se apilen verticalmente */
-  min-height: 100vh; /* Hace que el cuerpo ocupe toda la altura de la ventana */
   background-color: #ffffff; /* Define el color de fondo */
 }
 
 #root {
   flex: 1; /* Permite que el contenido principal ocupe el espacio restante */
-  display: flex; /* Usa flexbox para centrar el contenido */
-  justify-content: center; /* Centra horizontalmente */
-  align-items: center; /* Centra verticalmente */
+  width: 100%; /* Asegura que el contenedor ocupe todo el ancho */
+  height: 100%; /* Asegura que el contenedor ocupe toda la altura */
+  display: flex; /* Usa flexbox para alinear el contenido */
+  flex-direction: column; /* Asegura que los elementos se apilen verticalmente */
 }
 
 a {

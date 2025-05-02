@@ -6,7 +6,7 @@
   display: flex; /* Usa flexbox para alinear los elementos */
   justify-content: space-between; /* Distribuye los elementos con espacio entre ellos */
   align-items: center; /* Alinea los elementos verticalmente al centro */
-  padding: 10px 20px; /* Agrega espacio interno alrededor de los elementos */
+  padding: 15px 30px; /* Aumentar el padding para hacer la barra más ancha */
   background-color: #f8f9fa; /* Establece el color de fondo de la barra */
   border-bottom: 1px solid #ddd; /* Agrega un borde inferior */
   z-index: 1000; /* Asegura que la barra esté encima de otros elementos */

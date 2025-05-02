@@ -19,8 +19,9 @@ function App() {
           <Navbar />
           <main className="main-content">
             <Routes>
-               <Route path="/Login" element={<Login />} /> 
-              <Route path="/" element={<HomePage />} />
+              <Route path="/Login" element={<Login />} />
+              <Route path="/" element={<Login />} /> {/* Cambiar la ruta raíz para que no cargue HomePage */}
+              <Route path="/HomePage" element={<HomePage />} /> {/* Mantener el gráfico en esta ruta */}
               <Route path="/accounts" element={<AccountsPage />} />
               <Route path="/carga" element={<MovimientoResumen />} />
               <Route path="/profile" element={<UserInfo />} />

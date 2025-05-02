@@ -11,7 +11,11 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.5",
+    "chart.js": "^4.4.9",
     "node": "^23.11.0",
+    "papaparse": "^5.5.2",
+    "primeicons": "^7.0.0",
+    "primereact": "^10.9.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^6.30.0"

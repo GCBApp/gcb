@@ -54,6 +54,7 @@ export const getAllMovimientos = async (req, res) => {
 // Crear movimiento
 export const createMovimiento = async (req, res) => {
   try {
+    console.log("Datos recibidos en el backend:", req.body); // Depuración: Verificar datos recibidos
     const { MOV_Movimiento, MOV_id, US_Usuario, MON_Moneda, TM_Tipomovimiento, CUB_Cuentabancaria, MOV_Descripcion, MOV_Fecha_Mov, MOV_Valor } = req.body;
 
     if (!MOV_Movimiento || !US_Usuario || !MON_Moneda || !TM_Tipomovimiento || !CUB_Cuentabancaria) {

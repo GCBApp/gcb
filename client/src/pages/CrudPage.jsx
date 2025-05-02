@@ -25,8 +25,8 @@ const CrudPage = () => {
   ];
 
   return (
-    <section className="crud-page">
-      <div className="content-container">
+    <section className="crud-page" style={pageStyle}>
+      <div className="content-container" style={containerStyle}>
         <h1>Cruds</h1>
         {selectedCrud ? (
           <div className="crud-detail">
@@ -36,7 +36,7 @@ const CrudPage = () => {
             </button>
           </div>
         ) : (
-          <div className="crud-list">
+          <div className="crud-list" style={listStyle}>
             {cruds.map((crud) => (
               <div key={crud.name} style={{ marginBottom: "15px" }}>
                 <button
@@ -63,6 +63,25 @@ const CrudPage = () => {
       </div>
     </section>
   );
+};
+
+const pageStyle = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  height: "100vh",
+};
+
+const containerStyle = {
+  width: "100%",
+  maxWidth: "1200px",
+  textAlign: "center",
+};
+
+const listStyle = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
 };
 
 export default CrudPage;
