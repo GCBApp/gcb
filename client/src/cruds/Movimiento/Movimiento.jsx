@@ -20,7 +20,13 @@ function Movimiento() {
       const res = await fetch(`${API_URL}/api/movimiento`);
       if (!res.ok) throw new Error(`Error al obtener movimientos: ${res.status}`);
       const data = await res.json();
-      setMovimientos(data);
+
+      // Asegurarse de que no haya duplicados en los datos
+      const movimientosUnicos = Array.from(new Set(data.map((item) => item.MOV_Movimiento))).map(
+        (id) => data.find((item) => item.MOV_Movimiento === id)
+      );
+
+      setMovimientos(movimientosUnicos);
       setErrorMessage("");
     } catch (err) {
       console.error("Error al obtener movimientos:", err);
@@ -91,6 +97,8 @@ function Movimiento() {
                 <th>Fecha Movimiento</th>
                 <th>Fecha Registro</th>
                 <th>Valor</th>
+                <th>Tipo de Cambio</th> {/* Nueva columna */}
+                <th>Valor GTQ</th>       {/* Nueva columna */}
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -107,6 +115,8 @@ function Movimiento() {
                   <td>{item.MOV_Fecha_Mov}</td>
                   <td>{item.MOV_Fecha_Registro}</td>
                   <td>{item.MOV_Valor}</td>
+                  <td>{item.MOV_Tipo_Cambio}</td> {/* Mostrar Tipo de Cambio */}
+                  <td>{item.MOV_Valor_GTQ}</td>   {/* Mostrar Valor en GTQ */}
                   <td>
                     <button
                       onClick={() => {

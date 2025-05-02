@@ -22,6 +22,8 @@ import movimientoRoutes from "./cruds/Movimiento/movimiento.routes.js";
 
 import Compensacion from "./cruds/Compensacion/compensacion.routes.js";
 import Estado from "./cruds/Estado/estado.routes.js";
+import { updateExchangeRates } from "./tipo_cambio.js"; // Importar la función de tipo_cambio.js
+
 const app = express();
 
 const sqlConfig = {
@@ -77,7 +79,10 @@ app.get("/ping", async (req, res) => {
   }
 });
 
+// Exportar la función updateExchangeRates para uso global
+export { updateExchangeRates };
+
 app.listen(PORT, () => {
-  console.log("server started on port 3000");
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
 

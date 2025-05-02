@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AddCarga from "./AddCarga";
 
-
 const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 function MovimientoResumen() {
@@ -17,18 +16,24 @@ function MovimientoResumen() {
   const fetchMovimientos = async () => {
     try {
       console.log("Obteniendo movimientos...");
-    setLoading(true);
-    const res = await fetch(`${API_URL}/api/movimiento`);
-    if (!res.ok) throw new Error("Error al obtener los movimientos.");
-    const data = await res.json();
-    console.log("Movimientos obtenidos:", data);
-    setMovimientos(data);
-    setLoading(false);
-  } catch (err) {
-    console.error("Error al obtener los movimientos:", err);
-    setLoading(false);
-    setErrorMessage("Error al cargar los datos. Por favor, intente nuevamente.");
-    setTimeout(() => setErrorMessage(""), 3000);
+      setLoading(true);
+      const res = await fetch(`${API_URL}/api/movimiento`);
+      if (!res.ok) throw new Error("Error al obtener los movimientos.");
+      const data = await res.json();
+
+      // Asegurarse de que no haya duplicados en los datos
+      const movimientosUnicos = Array.from(new Set(data.map((item) => item.MOV_Movimiento))).map(
+        (id) => data.find((item) => item.MOV_Movimiento === id)
+      );
+
+      console.log("Movimientos obtenidos:", movimientosUnicos);
+      setMovimientos(movimientosUnicos);
+      setLoading(false);
+    } catch (err) {
+      console.error("Error al obtener los movimientos:", err);
+      setLoading(false);
+      setErrorMessage("Error al cargar los datos. Por favor, intente nuevamente.");
+      setTimeout(() => setErrorMessage(""), 3000);
     }
   };
 
@@ -44,9 +49,9 @@ function MovimientoResumen() {
     fetchMovimientos();
   }, []);
 
-  // Calcular totales de las columnas "DEBE" y "HABER"
-  const totalDebe = movimientos.reduce((sum, item) => (item.MOV_Valor > 0 ? sum + item.MOV_Valor : sum), 0);
-  const totalHaber = movimientos.reduce((sum, item) => (item.MOV_Valor < 0 ? sum + Math.abs(item.MOV_Valor) : sum), 0);
+  // Calcular totales de las columnas "DEBE" y "HABER" a partir de MOV_Valor_GTQ
+  const totalDebe = movimientos.reduce((sum, item) => (item.MOV_Valor_GTQ > 0 ? sum + item.MOV_Valor_GTQ : sum), 0);
+  const totalHaber = movimientos.reduce((sum, item) => (item.MOV_Valor_GTQ < 0 ? sum + Math.abs(item.MOV_Valor_GTQ) : sum), 0);
 
   return (
     <div>
@@ -97,11 +102,11 @@ function MovimientoResumen() {
                   <td>{item.TipoMovimiento}</td>
                   <td>{item.NombreUsuario}</td>
                   <td>{formatDate(item.MOV_Fecha_Mov)}</td>
-                  <td style={{ color: item.MOV_Valor > 0 ? "green" : "black" }}>
-                    {item.MOV_Valor > 0 ? item.MOV_Valor.toFixed(2) : ""}
+                  <td style={{ color: item.MOV_Valor_GTQ > 0 ? "green" : "black" }}>
+                    {item.MOV_Valor_GTQ > 0 ? item.MOV_Valor_GTQ.toFixed(2) : ""}
                   </td>
-                  <td style={{ color: item.MOV_Valor < 0 ? "red" : "black" }}>
-                    {item.MOV_Valor < 0 ? Math.abs(item.MOV_Valor).toFixed(2) : ""}
+                  <td style={{ color: item.MOV_Valor_GTQ < 0 ? "red" : "black" }}>
+                    {item.MOV_Valor_GTQ < 0 ? Math.abs(item.MOV_Valor_GTQ).toFixed(2) : ""}
                   </td>
                 </tr>
               ))}

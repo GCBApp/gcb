@@ -27,9 +27,9 @@ const AccountsPage = () => {
   }, []);
 
   const formatCurrency = (value) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("es-GT", {
       style: "currency",
-      currency: "USD",
+      currency: "GTQ",
     }).format(value);
   };
 
@@ -60,7 +60,7 @@ const AccountsPage = () => {
                 <p><strong>Tipo:</strong> {cuenta.CUB_Tipo}</p>
                 <p><strong>Banco:</strong> {cuenta.Banco_Nombre}</p>
                 <p><strong>País:</strong> {cuenta.Banco_Pais}</p>
-                <p><strong>Saldo:</strong> {formatCurrency(cuenta.CUB_saldo)}</p>
+                <p><strong>Saldo (GTQ):</strong> {formatCurrency(cuenta.CUB_saldo)}</p>
               </div>
             ))}
           </div>

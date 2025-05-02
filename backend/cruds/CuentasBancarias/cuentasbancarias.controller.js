@@ -21,12 +21,18 @@ export const getAllCuentas = async (req, res) => {
         cb.CUB_Nombre,
         cb.CUB_Tipo,
         cb.CUB_Número,
-        cb.CUB_saldo,
         cb.MON_Moneda,
         b.BAN_Nombre AS Banco_Nombre,
-        b.BAN_Pais AS Banco_Pais
-      FROM GCB_CUENTA_BANCARIA cb
-      INNER JOIN GCB_BANCOS b ON cb.BAN_Banco = b.BAN_bancos
+        b.BAN_Pais AS Banco_Pais,
+        ISNULL(SUM(m.MOV_Valor_GTQ), 0) AS CUB_saldo -- Calcular saldo dinámicamente
+      FROM 
+        GCB_CUENTA_BANCARIA cb
+      LEFT JOIN 
+        GCB_MOVIMIENTO m ON cb.CUB_Cuentabancaria = m.CUB_Cuentabancaria
+      INNER JOIN 
+        GCB_BANCOS b ON cb.BAN_Banco = b.BAN_bancos
+      GROUP BY 
+        cb.CUB_Cuentabancaria, cb.CUB_Nombre, cb.CUB_Tipo, cb.CUB_Número, cb.MON_Moneda, b.BAN_Nombre, b.BAN_Pais
     `);
     res.json(result.recordset);
   } catch (err) {
