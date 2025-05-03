@@ -78,8 +78,8 @@ function AddEstado({ onCancel, onSuccess }) {
           <label>Descripción:</label>
           <input
             type="text"
-            name="EST_descripcion"
-            value={formData.EST_descripcion}
+            name="EST_Descripcion"
+            value={formData.EST_Descripcion}
             onChange={handleChange}
           />
         </div>

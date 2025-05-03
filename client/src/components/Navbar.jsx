@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Menubar } from "primereact/menubar";
 import "primereact/resources/themes/saga-blue/theme.css";
@@ -9,22 +9,24 @@ import logo from "../assets/logo.png"; // Asegúrate de que el logo tenga fondo 
 
 const Navbar = () => {
   const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
-  if (isAuthenticated) return null; // No renderizar el Navbar si no está autenticado
+  if (!isAuthenticated) return null; // No renderizar el Navbar si no está autenticado
 
   const handleLogout = () => {
     setIsAuthenticated(false);
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("user");
-    window.location.reload();
+    navigate("/"); // Redirigir a la página de inicio de sesión
   };
 
   const items = [
-    { label: "Inicio", icon: "pi pi-home", command: () => (window.location.href = "/HomePage") },
-    { label: "Cuentas", icon: "pi pi-wallet", command: () => (window.location.href = "/accounts") },
-    { label: "Movimientos", icon: "pi pi-exchange", command: () => (window.location.href = "/carga") },
-    { label: "Perfil", icon: "pi pi-user", command: () => (window.location.href = "/profile") },
-    { label: "Cruds", icon: "pi pi-cog", command: () => (window.location.href = "/cruds") },
+    { label: "Inicio", icon: "pi pi-home", command: () => navigate("/HomePage") },
+    { label: "Cuentas", icon: "pi pi-wallet", command: () => navigate("/accounts") },
+    { label: "Movimientos", icon: "pi pi-exchange", command: () => navigate("/carga") },
+    { label: "Perfil", icon: "pi pi-user", command: () => navigate("/profile") },
+    { label: "Conciliacion", icon: "pi pi-upload", command: () => navigate("/conciliacion") },
+    { label: "Cruds", icon: "pi pi-cog", command: () => navigate("/cruds") },
     { label: "Cerrar Sesión", icon: "pi pi-sign-out", command: handleLogout },
   ];
 

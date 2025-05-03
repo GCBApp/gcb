@@ -1,0 +1,30 @@
+.p-toast-icon-close {
+    background-color: #ffffff !important; /* Cambiar el fondo del botón de cierre a naranja */
+    color: #003d0c !important; /* Cambiar el color del ícono a blanco */
+    border-radius: 50%; /* Hacer el botón circular */
+    padding: 5px; /* Ajustar el tamaño del botón */
+  }
+  
+  .p-toast-icon-close:hover {
+    background-color: #0D1B2A!important; /* Cambiar el fondo al pasar el cursor */
+    color: #ffffff !important; /* Mantener el color del ícono en blanco */
+  }
+  
+  .p-dialog-header-close {
+    background-color: #ffffff !important; /* Fondo naranja */
+    color: #003d0c !important; /* Ícono blanco */
+    border-radius: 50%; /* Hacer el botón circular */
+    padding: 5px; /* Ajustar el tamaño del botón */
+    transition: background-color 0.3s ease; /* Transición suave */
+  }
+  
+  .p-dialog-header-close:hover {
+    background-color: #0D1B2A !important; /* Fondo más oscuro al pasar el cursor */
+    color: #fff !important; /* Mantener el ícono blanco */
+  }
+  
+  .p-dialog-header-close-icon {
+    width: 14px;
+    height: 14px;
+  }
+  

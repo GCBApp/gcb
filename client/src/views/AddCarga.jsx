@@ -174,7 +174,7 @@ function AddCarga({ onCancel, onSuccess, initialData = {}, isReadOnly = false })
             {isReadOnly ? (
               <input
                 type="text"
-                value={monedas.find((moneda) => moneda.MON_Moneda === formData.MON_Moneda)?.MON_nombre || ""}
+                value={monedas.find((moneda) => moneda.MON_Moneda === formData.MON_moneda)?.MON_nombre || ""}
                 style={inputStyle}
                 readOnly
               />
@@ -188,7 +188,7 @@ function AddCarga({ onCancel, onSuccess, initialData = {}, isReadOnly = false })
               >
                 <option value="">Seleccione una moneda</option>
                 {monedas.map((moneda) => (
-                  <option key={moneda.MON_Moneda} value={moneda.MON_Moneda}>
+                  <option key={moneda.MON_Moneda} value={moneda.MON_moneda}>
                     {moneda.MON_nombre}
                   </option>
                 ))}
@@ -200,7 +200,7 @@ function AddCarga({ onCancel, onSuccess, initialData = {}, isReadOnly = false })
             {isReadOnly ? (
               <input
                 type="text"
-                value={usuarios.find((usuario) => usuario.US_Usuario === formData.US_Usuario)?.US_nombre || ""}
+                value={usuarios.find((usuario) => usuario.US_Usuario === formData.US_usuario)?.US_nombre || ""}
                 style={inputStyle}
                 readOnly
               />
@@ -214,7 +214,7 @@ function AddCarga({ onCancel, onSuccess, initialData = {}, isReadOnly = false })
               >
                 <option value="">Seleccione un usuario</option>
                 {usuarios.map((usuario) => (
-                  <option key={usuario.US_Usuario} value={usuario.US_Usuario}>
+                  <option key={usuario.US_Usuario} value={usuario.US_usuario}>
                     {usuario.US_nombre}
                   </option>
                 ))}

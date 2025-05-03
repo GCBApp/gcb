@@ -14,7 +14,7 @@ function EditEstado({ initialData, onCancel, onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await fetch(`${API_URL}/api/estado/${formData.COM_Compensacion}`, {
+      await fetch(`${API_URL}/api/estado/${formData.EST_Estado}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -32,7 +32,7 @@ function EditEstado({ initialData, onCancel, onSuccess }) {
       <div>
           <label>Referencia:</label>
           <input
-            type="number"
+            type="text"
             name="EST_Estado"
             value={formData.EST_Estado}
             onChange={handleChange}
@@ -44,7 +44,7 @@ function EditEstado({ initialData, onCancel, onSuccess }) {
         <div>
           <label>ID Movimiento:</label>
           <input
-            type="number"
+            type="text"
             name="MOV_movimiento"
             value={formData.MOV_movimiento}
             onChange={handleChange}
@@ -54,7 +54,7 @@ function EditEstado({ initialData, onCancel, onSuccess }) {
         <div>
           <label>ID Compensación:</label>
           <input
-            type="number"
+            type="text"
             name="COM_Compensacion"
             value={formData.COM_Compensacion}
             onChange={handleChange}
@@ -66,8 +66,8 @@ function EditEstado({ initialData, onCancel, onSuccess }) {
           <label>Descripción:</label>
           <input
             type="text"
-            name="EST_descripcion"
-            value={formData.EST_descripcion}
+            name="EST_Descripcion"
+            value={formData.EST_Descripcion}
             onChange={handleChange}
           />
         </div>

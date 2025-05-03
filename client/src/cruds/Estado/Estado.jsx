@@ -107,7 +107,7 @@ function Estado() {
                   <td>{item.EST_Estado}</td>
                   <td>{item.MOV_movimiento}</td>
                   <td>{item.COM_Compensacion}</td>
-                  <td>{item.EST_descripcion}</td>
+                  <td>{item.EST_Descripcion}</td>
                   <td>
                     <button
                       onClick={() => {
