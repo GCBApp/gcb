@@ -24,9 +24,9 @@ function Login() {
 
       if (user) {
         setErrorMessage("");
-        setIsAuthenticated(true); // Cambiado de True a true
+        setIsAuthenticated(true);
         alert(`Bienvenido ${user.TU_descripcion}, ${user.US_nombre}.`);
-        localStorage.setItem("user", JSON.stringify(user)); // Guarda la información del usuario en localStorage
+        localStorage.setItem("user", JSON.stringify(user));
         navigate("/HomePage", { state: { user } });
       } else {
         setErrorMessage("Usuario o contraseña incorrectos.");
@@ -38,128 +38,122 @@ function Login() {
   };
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "flex-end",
-      }}
-    >
-      <div
-        style={{
-          width: "500px",
-          height: "300px",
-          backgroundColor: "white",
-          padding: "40px",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-          borderRadius: "8px",
-          position: "relative",
-          color: "black",
-        }}
-      >
-        <h2
-          style={{
-            position: "absolute",
-            top: "20px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            margin: 0,
-            color: "black",
-          }}
-        >
-          Iniciar Sesión
-        </h2>
-
-        <form
-          onSubmit={handleLogin}
-          style={{
-            position: "absolute",
-            top: "80px",
-            left: "0",
-            right: "0",
-            padding: "0 40px",
-          }}
-        >
-          <div style={{ marginBottom: "15px", display: "flex", alignItems: "center" }}>
-            <label
-              htmlFor="username"
-              style={{
-                marginRight: "10px",
-                width: "100px",
-                textAlign: "right",
-              }}
-            >
-              Usuario:
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              style={{
-                flex: 1,
-                padding: "10px",
-                color: "black",
-                backgroundColor: "white",
-                border: "2px solid #ccc",
-                borderRadius: "4px",
-              }}
-            />
-          </div>
-          <div style={{ marginBottom: "15px", display: "flex", alignItems: "center" }}>
-            <label
-              htmlFor="password"
-              style={{
-                marginRight: "10px",
-                width: "100px",
-                textAlign: "right",
-              }}
-            >
-              Contraseña:
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              style={{
-                flex: 1,
-                padding: "10px",
-                color: "black",
-                backgroundColor: "white",
-                border: "2px solid #ccc",
-                borderRadius: "4px",
-              }}
-            />
-          </div>
-          {errorMessage && (
-            <div style={{ color: "red", marginBottom: "15px", textAlign: "center" }}>
-              <strong>{errorMessage}</strong>
+    <div style={outerContainerStyle}>
+      <div style={innerContainerStyle}>
+        <div style={formContainerStyle}>
+          <h2 style={headerStyle}>Iniciar Sesión</h2>
+          <form onSubmit={handleLogin} style={formStyle}>
+            <div style={inputGroupStyle}>
+              <label htmlFor="username" style={labelStyle}>
+                Usuario:
+              </label>
+              <input
+                type="text"
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                style={inputStyle}
+              />
             </div>
-          )}
-
-          <button
-            type="submit"
-            style={{
-              padding: "10px",
-              backgroundColor: "#007bff",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
-            Iniciar Sesión
-          </button>
-        </form>
+            <div style={inputGroupStyle}>
+              <label htmlFor="password" style={labelStyle}>
+                Contraseña:
+              </label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                style={inputStyle}
+              />
+            </div>
+            {errorMessage && (
+              <div style={errorStyle}>
+                <strong>{errorMessage}</strong>
+              </div>
+            )}
+            <button type="submit" style={buttonStyle}>
+              Iniciar Sesión
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
 }
+
+const outerContainerStyle = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  height: "100vh",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+};
+
+const innerContainerStyle = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  width: "100%",
+  maxWidth: "500px",
+  padding: "20px",
+};
+
+const formContainerStyle = {
+  width: "100%",
+  backgroundColor: "white",
+  padding: "40px",
+  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+  borderRadius: "8px",
+  color: "black",
+};
+
+const headerStyle = {
+  textAlign: "center",
+  marginBottom: "20px",
+  color: "black",
+};
+
+const formStyle = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "15px",
+};
+
+const inputGroupStyle = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "5px",
+};
+
+const labelStyle = {
+  fontSize: "14px",
+  color: "#555",
+};
+
+const inputStyle = {
+  padding: "10px",
+  border: "1px solid #ccc",
+  borderRadius: "4px",
+  fontSize: "14px",
+};
+
+const errorStyle = {
+  color: "red",
+  textAlign: "center",
+  marginBottom: "15px",
+};
+
+const buttonStyle = {
+  padding: "10px",
+  backgroundColor: "#007bff",
+  color: "white",
+  border: "none",
+  borderRadius: "4px",
+  cursor: "pointer",
+};
 
 export default Login;
