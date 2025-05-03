@@ -22,13 +22,7 @@ import movimientoRoutes from "./cruds/Movimiento/movimiento.routes.js";
 
 import Compensacion from "./cruds/Compensacion/compensacion.routes.js";
 import Estado from "./cruds/Estado/estado.routes.js";
-import { updateExchangeRates } from "./tipo_cambio.js"; // Importar la función de tipo_cambio.js  
-
-import reportechequesRoutes from "./routes/reportecheques.js";
-app.use(reportechequesRoutes);
-
-
-
+import { updateExchangeRates } from "./tipo_cambio.js"; // Importar la función de tipo_cambio.js
 
 const app = express();
 
@@ -67,8 +61,6 @@ app.use("/api/tipoMovimiento", tipoMovimientoRoutes);
 app.use("/api/movimiento", movimientoRoutes);
 app.use("/api/compensacion", Compensacion);
 app.use("/api/estado", Estado);
-app.use("/api/reporteCheques", reportechequesRoutes);   
-
 
 app.get("/ping", async (req, res) => {
   try {
