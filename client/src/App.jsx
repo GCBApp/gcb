@@ -10,6 +10,7 @@ import Login from "./views/Login";
 import UserInfo from "./views/UserInfo";
 import MovimientoResumen from "./views/Carga";
 import Conciliacion from "./pages/conciliacion";
+import CompensasionPage from "./pages/CompensasionPage"; // Add this import
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
               <Route path="/profile" element={<UserInfo />} />
               <Route path="/cruds" element={<CrudPage />} />
               <Route path="/conciliacion" element={<Conciliacion />} />
+              <Route path="/compensasion" element={<CompensasionPage />} /> {/* Add this route */}
             </Routes>
           </main>
         </div>

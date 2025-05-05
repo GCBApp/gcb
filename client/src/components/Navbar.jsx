@@ -26,6 +26,7 @@ const Navbar = () => {
     { label: "Movimientos", icon: "pi pi-exchange", command: () => navigate("/carga") },
     { label: "Perfil", icon: "pi pi-user", command: () => navigate("/profile") },
     { label: "Conciliacion", icon: "pi pi-upload", command: () => navigate("/conciliacion") },
+    { label: "Compensasion", icon: "pi pi-calculator", command: () => navigate("/compensasion") },
     { label: "Cruds", icon: "pi pi-cog", command: () => navigate("/cruds") },
     { label: "Cerrar Sesión", icon: "pi pi-sign-out", command: handleLogout },
   ];
