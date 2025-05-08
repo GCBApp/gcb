@@ -90,7 +90,7 @@ function MovimientoResumen() {
 
         // Mapeo de columnas del CSV a los nombres esperados por el backend
         const columnMapping = {
-          "ID Movimiento": "MOV_Movimiento",
+          // "ID Movimiento": "MOV_Movimiento", // Eliminado porque ahora es automático
           "Referencia": "MOV_id",
           "Usuario": "US_Usuario",
           "Moneda": "MON_Moneda",

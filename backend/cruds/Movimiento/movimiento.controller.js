@@ -55,13 +55,21 @@ export const getAllMovimientos = async (req, res) => {
 export const createMovimiento = async (req, res) => {
   try {
     console.log("Datos recibidos en el backend:", req.body); // Depuración: Verificar datos recibidos
-    const { MOV_Movimiento, MOV_id, US_Usuario, MON_Moneda, TM_Tipomovimiento, CUB_Cuentabancaria, MOV_Descripcion, MOV_Fecha_Mov, MOV_Valor } = req.body;
+    const { MOV_id, US_Usuario, MON_Moneda, TM_Tipomovimiento, CUB_Cuentabancaria, MOV_Descripcion, MOV_Fecha_Mov, MOV_Valor } = req.body;
 
-    if (!MOV_Movimiento || !US_Usuario || !MON_Moneda || !TM_Tipomovimiento || !CUB_Cuentabancaria) {
+    if (!US_Usuario || !MON_Moneda || !TM_Tipomovimiento || !CUB_Cuentabancaria) {
       return res.status(400).send("Faltan datos requeridos.");
     }
 
     const pool = await sql.connect(sqlConfig);
+
+    // Generar el siguiente correlativo para MOV_Movimiento
+    const result = await pool.request().query(`
+      SELECT ISNULL(MAX(CAST(SUBSTRING(MOV_Movimiento, 3, LEN(MOV_Movimiento)) AS INT)), 0) + 1 AS nextId
+      FROM GCB_MOVIMIENTO
+    `);
+    const nextId = result.recordset[0].nextId;
+    const MOV_Movimiento = `MV${nextId.toString().padStart(6, "0")}`;
 
     // Obtener el ID Banguat de la moneda
     const monedaInfo = await pool
@@ -101,8 +109,8 @@ export const createMovimiento = async (req, res) => {
           VALUES (@movimiento, @id, @usuario, @moneda, @tipoMovimiento, @cuentaBancaria, @descripcion, @fechaMov, @fechaRegistro, @valor, @tipoCambioCompra, @valorGTQ)
         `);
 
-      res.status(201).send("Movimiento creado.");
-      return;
+      // Enviar una respuesta con el movimiento creado
+      return res.status(201).json({ MOV_Movimiento, message: "Movimiento creado exitosamente." });
     }
 
     // Buscar tipo de cambio en el historial
@@ -218,7 +226,8 @@ export const createMovimiento = async (req, res) => {
         WHERE CUB_Cuentabancaria = @CUB_Cuentabancaria
       `);
 
-    res.status(201).send("Movimiento creado.");
+    // Enviar una respuesta con el movimiento creado
+    res.status(201).json({ MOV_Movimiento, message: "Movimiento creado exitosamente." });
   } catch (err) {
     console.error("Error al crear movimiento:", err);
     res.status(500).send("Error al crear movimiento.");

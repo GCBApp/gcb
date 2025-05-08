@@ -6,7 +6,8 @@ import {
   updateCompensacion,
   deleteCompensacion,
   processCompensation,
-  checkTableSchemas // Añade esta importación
+  checkTableSchemas, // Añade esta importación
+  getNextCompensacionId // Importa la función para obtener el siguiente ID
 } from "./compensacion.controller.js";
 
 const router = Router();
@@ -18,5 +19,6 @@ router.put("/:id", updateCompensacion);
 router.delete("/:id", deleteCompensacion);
 router.post("/process", processCompensation);
 router.get("/schemas", checkTableSchemas); // Añade esta línea
+router.get("/next-id", getNextCompensacionId); // Endpoint para obtener el siguiente ID de compensación
 
 export default router;

@@ -88,36 +88,51 @@ export const getCompensacionById = async (req, res) => {
 export const createCompensacion = async (req, res) => {
   let pool = null;
   try {
-    const { COM_Compensacion, COM_Descripción, COM_Fecha, COM_Tipo, COM_Valor } = req.body;
+    const { COM_Descripción, COM_Fecha, COM_Tipo, COM_Valor } = req.body;
 
     // Validación de datos de entrada
-    if (!COM_Compensacion || !COM_Descripción || !COM_Fecha || !COM_Tipo || COM_Valor === undefined || COM_Valor === null) {
+    if (!COM_Descripción || !COM_Fecha || !COM_Tipo || COM_Valor === undefined || COM_Valor === null) {
+      console.error("Datos faltantes o inválidos:", { COM_Descripción, COM_Fecha, COM_Tipo, COM_Valor });
       return res.status(400).send("Faltan datos requeridos o el valor es inválido");
     }
 
     pool = await sql.connect(sqlConfig);
 
-    // Verificar si ya existe una compensación con ese ID
-    const checkExists = await pool.request()
-      .input("compensacionId", sql.Char(10), COM_Compensacion)
-      .query("SELECT COUNT(*) AS count FROM GCB_COMPENSACION WHERE COM_Compensacion = @compensacionId");
-
-    if (checkExists.recordset[0].count > 0) {
-        return res.status(409).send("Ya existe una compensación con esa referencia.");
-    }
+    // Generar el siguiente ID correlativo para la compensación
+    const result = await pool.request().query(`
+      SELECT ISNULL(MAX(CAST(SUBSTRING(COM_Compensacion, 3, LEN(COM_Compensacion)) AS INT)), 0) + 1 AS nextId
+      FROM GCB_COMPENSACION
+      WHERE PATINDEX('CM%', COM_Compensacion) = 1
+    `);
+    const nextId = result.recordset[0].nextId;
+    const compensacionId = `CM${nextId.toString().padStart(6, "0")}`;
 
     // Insertar la nueva compensación
-    await pool
+    const insertResult = await pool
       .request()
-      .input("compensacion", sql.Char(10), COM_Compensacion)
-      .input("descripcion", sql.VarChar, COM_Descripción)
+      .input("compensacion", sql.Char(10), compensacionId)
+      .input("descripcion", sql.VarChar(255), COM_Descripción)
       .input("fecha", sql.Date, COM_Fecha)
-      .input("tipo", sql.VarChar, COM_Tipo)
-      .input("valor", sql.Decimal(18, 2), COM_Valor) // Usar Decimal para valores monetarios
+      .input("tipo", sql.VarChar(50), COM_Tipo)
+      .input("valor", sql.Decimal(18, 2), COM_Valor)
       .query(
         "INSERT INTO GCB_COMPENSACION (COM_Compensacion, COM_Descripción, COM_Fecha, COM_Tipo, COM_Valor) VALUES (@compensacion, @descripcion, @fecha, @tipo, @valor)"
       );
-    res.status(201).send("Compensación creada");
+
+    console.log("Resultado de la inserción:", insertResult);
+
+    // Recuperar el registro recién insertado para confirmar
+    const insertedCompensacion = await pool
+      .request()
+      .input("compensacion", sql.Char(10), compensacionId)
+      .query("SELECT * FROM GCB_COMPENSACION WHERE COM_Compensacion = @compensacion");
+
+    console.log("Registro insertado recuperado:", insertedCompensacion.recordset[0]);
+
+    res.status(201).json({
+      message: "Compensación creada exitosamente.",
+      compensacion: insertedCompensacion.recordset[0],
+    });
   } catch (err) {
     console.error("Error al crear la compensación:", err);
     res.status(500).send("Error al crear la compensación");
@@ -395,6 +410,35 @@ export const checkTableSchemas = async (req, res) => {
     res.status(500).send("Error al verificar esquemas de tablas");
   } finally {
      if (pool) {
+      try {
+        await pool.close();
+      } catch (closeErr) {
+        console.error("Error al cerrar la conexión:", closeErr);
+      }
+    }
+  }
+};
+
+// Obtener el siguiente ID de compensación
+export const getNextCompensacionId = async (req, res) => {
+  let pool = null;
+  try {
+    pool = await sql.connect(sqlConfig);
+
+    // Obtener el siguiente ID correlativo
+    const result = await pool.request().query(`
+      SELECT ISNULL(MAX(CAST(SUBSTRING(COM_Compensacion, 3, LEN(COM_Compensacion)) AS INT)), 0) + 1 AS nextId
+      FROM GCB_COMPENSACION
+    `);
+    const nextId = result.recordset[0].nextId;
+    const compensacionId = `CM${nextId.toString().padStart(6, "0")}`;
+
+    res.json({ nextId: compensacionId });
+  } catch (err) {
+    console.error("Error al obtener el siguiente ID de compensación:", err);
+    res.status(500).send("Error al obtener el siguiente ID de compensación");
+  } finally {
+    if (pool) {
       try {
         await pool.close();
       } catch (closeErr) {
