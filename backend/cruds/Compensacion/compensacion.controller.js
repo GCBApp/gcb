@@ -265,14 +265,15 @@ export const processCompensation = async (req, res) => {
 
     // 2. Insertar en la tabla GCB_COMPENSACION usando parámetros
     console.log("Insertando compensación:", compensacionId);
-    await request // Reutilizar el request de la transacción
-      .input("compensacionId", sql.Char(10), compensacionId)
+    const insertRequest = new sql.Request(transaction);
+    await insertRequest
+      .input("compId", sql.Char(10), compensacionId) // Changed parameter name
       .input("descripcion", sql.VarChar, descripcionComp)
       .input("fecha", sql.Date, fechaComp)
       .input("tipo", sql.VarChar, tipoComp)
       .input("valor", sql.Decimal(18, 2), valorComp)
       .query(
-        "INSERT INTO GCB_COMPENSACION (COM_Compensacion, COM_Descripción, COM_Fecha, COM_Tipo, COM_Valor) VALUES (@compensacionId, @descripcion, @fecha, @tipo, @valor)"
+        "INSERT INTO GCB_COMPENSACION (COM_Compensacion, COM_Descripción, COM_Fecha, COM_Tipo, COM_Valor) VALUES (@compId, @descripcion, @fecha, @tipo, @valor)"
       );
     console.log("Compensación registrada correctamente");
 
@@ -317,12 +318,12 @@ export const processCompensation = async (req, res) => {
       // Asumiendo que EST_Estado es IDENTITY. Si no, añade .input("estadoId", sql.Int, estadoId) y el campo en VALUES
       await estadoRequest // Usar estadoRequest
         .input("movId", sql.Int, movIdInt) // Usar el ID numérico
-        .input("compensacionId", sql.Char(10), compensacionId) // Usar el ID de compensación correcto
+        .input("compIdForEstado", sql.Char(10), compensacionId) // Changed parameter name to avoid conflict
         .input("descripcionEstado", sql.VarChar, estadoDescripcion)
         .query(`
           INSERT INTO GCB_ESTADO (MOV_movimiento, COM_Compensacion, EST_descripcion)
-          VALUES (@movId, @compensacionId, @descripcionEstado)
-        `); // Quitar EST_Estado si es IDENTITY
+          VALUES (@movId, @compIdForEstado, @descripcionEstado)
+        `); // Updated parameter reference in the query
 
       console.log(`Estado creado para movimiento ${cleanMovIdStr}`);
       procesados++;
