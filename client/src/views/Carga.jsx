@@ -111,31 +111,58 @@ function MovimientoResumen() {
 
         console.log("Datos mapeados para el backend:", mappedData); // Depuración
 
-        for (const record of mappedData) {
-          try {
-            const res = await fetch(`${API_URL}/api/movimiento`, {
+        try {
+          // Enviar todos los registros al backend en paralelo
+          const uploadPromises = mappedData.map((record) =>
+            fetch(`${API_URL}/api/movimiento`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(record),
+            })
+          );
+
+          const responses = await Promise.all(uploadPromises);
+
+          // Verificar si hubo errores en alguna de las solicitudes
+          const failedUploads = responses.filter((res) => !res.ok);
+          if (failedUploads.length > 0) {
+            console.error("Algunos registros no se pudieron cargar:", failedUploads);
+            toast.current.show({
+              severity: "warn",
+              summary: "Carga incompleta",
+              detail: `${failedUploads.length} registros no se pudieron cargar.`,
+              life: 4000,
             });
-
-            if (!res.ok) {
-              const errorText = await res.text();
-              console.error(`Error al procesar el registro: ${JSON.stringify(record)} - ${errorText}`);
-            }
-          } catch (err) {
-            console.error(`Error al enviar el registro: ${JSON.stringify(record)}`, err);
+          } else {
+            toast.current.show({
+              severity: "success",
+              summary: "Completado",
+              detail: "Carga masiva finalizada exitosamente.",
+              life: 3000,
+            });
           }
+        } catch (err) {
+          console.error("Error al procesar la carga masiva:", err);
+          toast.current.show({
+            severity: "error",
+            summary: "Error",
+            detail: "Ocurrió un error al procesar la carga masiva.",
+            life: 4000,
+          });
+        } finally {
+          setIsUploading(false); // Ocultar spinner
+          fetchMovimientos(); // Recargar movimientos después de la carga masiva
         }
-
-        setIsUploading(false); // Ocultar spinner
-        toast.current.show({ severity: "success", summary: "Completado", detail: "Carga masiva finalizada.", life: 3000 });
-        fetchMovimientos(); // Recargar movimientos después de la carga masiva
       },
       error: (err) => {
         console.error("Error al procesar el archivo CSV:", err);
         setIsUploading(false); // Ocultar spinner
-        toast.current.show({ severity: "error", summary: "Error", detail: "Error al procesar el archivo CSV.", life: 3000 });
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: "Error al procesar el archivo CSV.",
+          life: 3000,
+        });
       },
     });
   };
