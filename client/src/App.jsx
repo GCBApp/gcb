@@ -10,29 +10,38 @@ import Login from "./views/Login";
 import UserInfo from "./views/UserInfo";
 import MovimientoResumen from "./views/Carga";
 import Conciliacion from "./pages/conciliacion";
-import CompensasionPage from "./pages/CompensasionPage"; // Add this import
+import CompensasionPage from "./pages/CompensasionPage";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+
+function AppContent() {
+  const { isAuthenticated } = useAuth();
+  
+  return (
+    <div className="app-container">
+      {/* Renderizar el Navbar solo si el usuario está autenticado */}
+      {isAuthenticated && <Navbar />}
+      <main className="main-content">
+        <Routes>
+          <Route path="/Login" element={<Login />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/HomePage" element={<HomePage />} />
+          <Route path="/accounts" element={<AccountsPage />} />
+          <Route path="/carga" element={<MovimientoResumen />} />
+          <Route path="/profile" element={<UserInfo />} />
+          <Route path="/cruds" element={<CrudPage />} />
+          <Route path="/conciliacion" element={<Conciliacion />} />
+          <Route path="/compensasion" element={<CompensasionPage />} />
+        </Routes>
+      </main>
+    </div>
+  );
+}
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="app-container">
-          <Navbar />
-          <main className="main-content">
-            <Routes>
-              <Route path="/Login" element={<Login />} />
-              <Route path="/" element={<Login />} /> {/* Cambiar la ruta raíz para que no cargue HomePage */}
-              <Route path="/HomePage" element={<HomePage />} /> {/* Mantener el gráfico en esta ruta */}
-              <Route path="/accounts" element={<AccountsPage />} />
-              <Route path="/carga" element={<MovimientoResumen />} />
-              <Route path="/profile" element={<UserInfo />} />
-              <Route path="/cruds" element={<CrudPage />} />
-              <Route path="/conciliacion" element={<Conciliacion />} />
-              <Route path="/compensasion" element={<CompensasionPage />} /> {/* Add this route */}
-            </Routes>
-          </main>
-        </div>
+        <AppContent />
       </Router>
     </AuthProvider>
   );
