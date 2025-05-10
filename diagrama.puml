@@ -1,0 +1,119 @@
+@startuml
+' Diagrama de clases UML para el backend completo (sin detalles de base de datos)
+
+' Clases combinadas (entidades y controladores)
+class Compensacion {
+    - COM_Compensacion : String
+    - COM_Descripción : String
+    - COM_Fecha : Date
+    - COM_Tipo : String
+    - COM_Valor : Float
+    --
+    + getAllCompensaciones(req, res)
+    + getCompensacionById(req, res)
+    + createCompensacion(req, res)
+    + processCompensation(req, res)
+    + deleteCompensacion(req, res)
+}
+
+class Movimiento {
+    - MOV_Movimiento : String
+    - MOV_id : String
+    - MOV_Descripcion : String
+    - MOV_Fecha_Mov : Date
+    - MOV_Valor : Float
+    - MOV_Tipo_Cambio : Float
+    - MOV_Valor_GTQ : Float
+    --
+    + getAllMovimientos(req, res)
+    + createMovimiento(req, res)
+    + updateMovimiento(req, res)
+    + deleteMovimiento(req, res)
+}
+
+class Usuario {
+    - US_Usuario : String
+    - US_Nombre : String
+    - US_Correo : String
+    - US_Contraseña : String
+    --
+    + getAllUsuarios(req, res)
+    + getTiposUsuario(req, res)
+    + createUsuario(req, res)
+    + deleteUsuario(req, res)
+}
+
+class TipoMovimiento {
+    - TM_Tipomovimiento : String
+    - TM_Descripcion : String
+    --
+    + getAllTipoMovimientos(req, res)
+    + createTipoMovimiento(req, res)
+    + updateTipoMovimiento(req, res)
+    + deleteTipoMovimiento(req, res)
+}
+
+class CuentaBancaria {
+    - CUB_Cuentabancaria : String
+    - CUB_Nombre : String
+    - CUB_Tipo : String
+    - CUB_Número : String
+    - CUB_Saldo : Float
+    --
+    + getAllCuentas(req, res)
+    + createCuenta(req, res)
+    + updateCuenta(req, res)
+    + deleteCuenta(req, res)
+}
+
+class Banco {
+    - BAN_bancos : String
+    - BAN_Nombre : String
+    - BAN_Pais : String
+    --
+    + getAllBancos(req, res)
+    + getBancoById(req, res)
+    + createBanco(req, res)
+    + updateBanco(req, res)
+    + deleteBanco(req, res)
+}
+
+class Estado {
+    - EST_Estado : String
+    - EST_Descripcion : String
+    --
+    + getAllEstados(req, res)
+    + getEstadoById(req, res)
+    + createEstado(req, res)
+}
+
+class Moneda {
+    - MON_Moneda : String
+    - MON_Nombre : String
+    - MON_Tipo_Cambio : Float
+    --
+    + getAllMonedas(req, res)
+    + getMonedasById(req, res)
+    + createMoneda(req, res)
+    + updateMoneda(req, res)
+    + deleteMoneda(req, res)
+    + updateExchangeRates(req, res)
+}
+
+class TipoCambio {
+    --
+    + updateExchangeRates()
+}
+
+' Relaciones entre clases
+Compensacion --> Movimiento : "procesa"
+Compensacion --> Estado : "crea"
+Movimiento --> Usuario : "creado por"
+Movimiento --> Moneda : "usa tipo de cambio"
+Movimiento --> CuentaBancaria : "asociado a"
+Estado --> Movimiento : "relacionado con"
+Estado --> Compensacion : "pertenece a"
+CuentaBancaria --> Banco : "pertenece a"
+Moneda --> TipoCambio : "actualiza tipos de cambio"
+
+@enduml
