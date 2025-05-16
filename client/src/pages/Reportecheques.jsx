@@ -3,7 +3,7 @@ import { Chart } from "primereact/chart";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
-const HomePage = () => {
+const Cheques = () => {
   const [lineChartData, setLineChartData] = useState(null);
   const [pieChartData, setPieChartData] = useState(null);
 
@@ -129,4 +129,4 @@ const chartContainerStyle = {
   alignItems: "center",
 };
 
-export default HomePage;
+export default Cheques;

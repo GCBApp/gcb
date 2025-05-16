@@ -11,6 +11,7 @@ import UserInfo from "./views/UserInfo";
 import MovimientoResumen from "./views/Carga";
 import Conciliacion from "./pages/conciliacion";
 import CompensasionPage from "./pages/CompensasionPage";
+import AddAccount from "./pages/AddAcount";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
 function AppContent() {
@@ -30,6 +31,7 @@ function AppContent() {
           <Route path="/profile" element={<UserInfo />} />
           <Route path="/cruds" element={<CrudPage />} />
           <Route path="/conciliacion" element={<Conciliacion />} />
+          <Route path="/Addacount" element={<AddAccount />} />
           <Route path="/compensasion" element={<CompensasionPage />} />
         </Routes>
       </main>

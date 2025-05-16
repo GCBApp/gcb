@@ -21,18 +21,22 @@ export const getAllCuentas = async (req, res) => {
         cb.CUB_Nombre,
         cb.CUB_Tipo,
         cb.CUB_Número,
-        cb.MON_Moneda,
+        mo.MON_moneda,
+        mo.MON_nombre,
+        b.BAN_bancos,
         b.BAN_Nombre AS Banco_Nombre,
         b.BAN_Pais AS Banco_Pais,
-        ISNULL(SUM(m.MOV_Valor_GTQ), 0) AS CUB_saldo -- Calcular saldo dinámicamente
+        ISNULL( (SUM(m.MOV_Valor) + cb.CUB_saldo), cb.CUB_saldo) AS CUB_saldo -- Calcular saldo dinámicamente
       FROM 
         GCB_CUENTA_BANCARIA cb
       LEFT JOIN 
         GCB_MOVIMIENTO m ON cb.CUB_Cuentabancaria = m.CUB_Cuentabancaria
       INNER JOIN 
         GCB_BANCOS b ON cb.BAN_Banco = b.BAN_bancos
+      INNER JOIN
+        GCB_MONEDA mo ON cb.MON_moneda = mo.MON_moneda
       GROUP BY 
-        cb.CUB_Cuentabancaria, cb.CUB_Nombre, cb.CUB_Tipo, cb.CUB_Número, cb.MON_Moneda, b.BAN_Nombre, b.BAN_Pais
+        cb.CUB_Cuentabancaria, cb.CUB_Nombre, cb.CUB_saldo, cb.CUB_Tipo, cb.CUB_Número, mo.MON_nombre, mo.MON_Moneda, b.BAN_bancos, b.BAN_Nombre, b.BAN_Pais
     `);
     res.json(result.recordset);
   } catch (err) {
@@ -58,35 +62,46 @@ export const getCuentaById = async (req, res) => {
 
 export const createCuenta = async (req, res) => {
   try {
-    const { CUB_Cuentabancaria, CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda, CUB_Número, CUB_saldo} = req.body;
+    const {CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda, CUB_Número, CUB_saldo} = req.body;
 
     // Validación de datos
-    if (!CUB_Cuentabancaria || !CUB_Nombre || !CUB_Tipo || !BAN_banco || !MON_moneda || !CUB_Número) {
+    if ( !CUB_Nombre || !CUB_Tipo || !BAN_banco || !MON_moneda || !CUB_Número) {
       return res.status(400).send("Faltan datos requeridos: CUB_Cuentabancaria, CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda o CUB_Número");
     }
 
     const pool = await sql.connect(sqlConfig);
 
+    let newCuentaId;
+    let exists = true;
+    let counter = 1;
+
+    while (exists) {
+      // Generar el ID con el formato CBXXXXXX
+      newCuentaId = `CB${String(counter).padStart(6, "0")}`;
+
     // Verificar si el ID ya existe
     const checkId = await pool
-      .request()
-      .input("cuenta", sql.Char(10), CUB_Cuentabancaria)
-      .query("SELECT COUNT(*) AS count FROM GCB_CUENTA_BANCARIA WHERE CUB_Cuentabancaria = @cuenta");
+        .request()
+        .input("cuenta", sql.Char(10), newCuentaId)
+        .query("SELECT COUNT(*) AS count FROM GCB_CUENTA_BANCARIA WHERE CUB_Cuentabancaria = @cuenta");
 
-    if (checkId.recordset[0].count > 0) {
-      return res.status(400).send("La cuenta ya existe. No se pueden agregar registros duplicados.");
+      if (checkId.recordset[0].count === 0) {
+        exists = false; // Si no existe, salir del bucle
+      } else {
+        counter++; // Incrementar el contador si ya existe
+      }
     }
 
     // Insertar el nuevo registro
     await pool
       .request()
-      .input("cuenta", sql.Char(10), CUB_Cuentabancaria)
+      .input("cuenta", sql.Char(10), newCuentaId)
       .input("nombre", sql.VarChar, CUB_Nombre)
       .input("tipo", sql.VarChar, CUB_Tipo)
       .input("banco", sql.Char(10), BAN_banco)
       .input("moneda", sql.VarChar, MON_moneda)
       .input("Número", sql.Int, CUB_Número)
-      .input("saldo", sql.Int, CUB_saldo)
+      .input("saldo", sql.Decimal(18, 2), CUB_saldo)
       .query(
         "INSERT INTO GCB_CUENTA_BANCARIA (CUB_Cuentabancaria, CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda, CUB_Número, CUB_saldo) VALUES (@cuenta, @nombre, @tipo, @banco, @moneda, @Número, @saldo)"
       );
