@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-// El Navbar ya no será necesario en este diseño
-// import Navbar from "../components/Navbar";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
@@ -10,10 +8,75 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [fadeIn, setFadeIn] = useState(true);
   const navigate = useNavigate();
   const { setIsAuthenticated } = useAuth();
+  const intervalRef = useRef(null); // Referencia para almacenar el ID del intervalo
 
-  // Mantener la misma funcionalidad de login
+  // Array de imágenes con textos descriptivos
+  const images = [
+    {
+      src: "/src/assets/team-discussion.jpg",
+      text: "Analiza y gestiona tus finanzas bancarias con facilidad.",
+    },
+    {
+      src: "/src/assets/finance-review.jpg",
+      text: "Obtén reportes detallados de tus movimientos financieros.",
+    },
+    {
+      src: "/src/assets/building.jpg",
+      text: "Confianza y seguridad en la gestión de tus cuentas bancarias.",
+    }
+  ];
+
+  // Función para iniciar/reiniciar el temporizador de cambio de imagen
+  const startSlideshow = () => {
+    // Limpiar el intervalo existente si hay uno
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    
+    // Crear nuevo intervalo
+    intervalRef.current = setInterval(() => {
+      // Iniciar desvanecimiento
+      setFadeIn(false);
+      
+      // Cambiar imagen después del desvanecimiento
+      setTimeout(() => {
+        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+        setFadeIn(true);
+      }, 500);
+    }, 5000); // Cambiado a 5 segundos (5000ms)
+  };
+
+  // Iniciar el slideshow al montar el componente
+  useEffect(() => {
+    startSlideshow();
+    
+    // Limpiar el intervalo al desmontar
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [images.length]);
+
+  // Función para cambiar manualmente a la siguiente imagen
+  const handleNextImage = () => {
+    // Iniciar desvanecimiento
+    setFadeIn(false);
+    
+    setTimeout(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+      setFadeIn(true);
+      
+      // Reiniciar el temporizador después de cambiar la imagen manualmente
+      startSlideshow();
+    }, 500);
+  };
+
+  // Manejo del login
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -41,20 +104,6 @@ function Login() {
     }
   };
 
-  // Cargar la fuente Open Sans
-  useEffect(() => {
-    const linkElement = document.createElement("link");
-    linkElement.rel = "stylesheet";
-    linkElement.href = "https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap";
-    document.head.appendChild(linkElement);
-
-    return () => {
-      if (document.head.contains(linkElement)) {
-        document.head.removeChild(linkElement);
-      }
-    };
-  }, []);
-
   return (
     <div style={containerStyle}>
       {/* Panel izquierdo */}
@@ -68,16 +117,26 @@ function Login() {
         </div>
         
         <div style={leftContentStyle}>
-          <img 
-            src="/src/assets/team-discussion.jpg" 
-            alt="Financial Analysis" 
-            style={imageStyle} 
-          />
-          
-          <div style={textContainerStyle}>
-            <p style={descriptionStyle}>
-              GCB te ayuda a gestionar y analizar tus finanzas bancarias fácilmente.
+          <div style={imageContainerStyle}>
+            <img 
+              src={images[currentImageIndex].src} 
+              alt="Financial Services" 
+              style={{
+                ...imageStyle,
+                opacity: fadeIn ? 1 : 0
+              }} 
+            />
+            <p style={imageTextStyle}>
+              {images[currentImageIndex].text}
             </p>
+            
+            {/* Botón de flecha redondeada */}
+            <button 
+              onClick={handleNextImage} 
+              style={arrowButtonStyle}
+            >
+              <span style={arrowSymbolStyle}>→</span>
+            </button>
           </div>
         </div>
       </div>
@@ -128,7 +187,7 @@ function Login() {
   );
 }
 
-// Estilos basados en el diseño de Figma
+// Estilos
 const containerStyle = {
   display: "flex",
   height: "100vh",
@@ -138,18 +197,18 @@ const containerStyle = {
 
 const leftPanelStyle = {
   flex: 1,
-  backgroundColor: "#E0E1DD", // Cambiado de #ffffff a #E0E1DD
+  backgroundColor: "#E0E1DD",
   display: "flex",
   flexDirection: "column",
   padding: "20px",
+  position: "relative",
 };
 
-// Versión alternativa con posicionamiento absoluto para mayor énfasis
 const logoContainerStyle = {
   position: "absolute",
   top: "20px",
   left: "20px",
-  zIndex: "100", // Asegura que esté por encima de otros elementos
+  zIndex: "100",
 };
 
 const logoStyle = {
@@ -163,29 +222,60 @@ const leftContentStyle = {
   justifyContent: "center",
   alignItems: "center",
   flex: 1,
-  padding: "20px",
+};
+
+const imageContainerStyle = {
+  position: "relative",
+  width: "100%",
+  maxWidth: "600px", // 40% más grande
+  textAlign: "center",
 };
 
 const imageStyle = {
   width: "100%",
-  maxWidth: "400px",
-  marginBottom: "30px",
+  height: "auto",
+  borderRadius: "8px",
+  boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+  transition: "opacity 0.5s ease-in-out", // Transición suave
 };
 
-const textContainerStyle = {
-  width: "100%",
-  maxWidth: "400px",
-};
-
-const descriptionStyle = {
-  fontSize: "18px",
+const imageTextStyle = {
+  marginTop: "15px",
+  fontSize: "16px",
   color: "#415A77",
+  fontWeight: "500",
   lineHeight: "1.5",
+};
+
+// Estilo del botón de flecha redondeada
+const arrowButtonStyle = {
+  position: "absolute",
+  right: "15px",
+  top: "50%",
+  transform: "translateY(-50%)",
+  width: "50px",
+  height: "50px",
+  borderRadius: "50%", // Forma circular
+  backgroundColor: "#1565C0",
+  color: "white",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  border: "none",
+  boxShadow: "0 3px 6px rgba(0,0,0,0.3)",
+  cursor: "pointer",
+  transition: "background-color 0.3s, transform 0.2s",
+  zIndex: 10,
+};
+
+const arrowSymbolStyle = {
+  fontSize: "24px",
+  fontWeight: "bold",
 };
 
 const rightPanelStyle = {
   flex: 1,
-  backgroundColor: "#0D1B2A", // Color azul oscuro del panel derecho
+  backgroundColor: "#0D1B2A",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
@@ -226,7 +316,7 @@ const inputStyle = {
   fontSize: "16px",
   borderRadius: "5px",
   border: "none",
-  backgroundColor: "#E0E1DD", // Cambiado de #ffffff a #E0E1DD
+  backgroundColor: "#E0E1DD",
 };
 
 const errorStyle = {
