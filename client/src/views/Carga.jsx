@@ -209,78 +209,67 @@ function MovimientoResumen() {
   }, []);
 
   return (
-    <div>
-      <Toast ref={toast} /> {/* Componente Toast */}
+    <div className="container">
+      <Toast ref={toast} />
+      
+      {/* Modal de confirmación de eliminación */}
       <Dialog
         visible={deleteDialogVisible}
         onHide={() => setDeleteDialogVisible(false)}
         header="Confirmar eliminación"
+        style={{ width: "400px", borderRadius: "8px", overflow: "hidden" }}
+        headerClassName="dialog-header"
+        contentClassName="dialog-content"
         footer={
-          <div>
+          <div className="dialog-footer">
             <button
               onClick={() => setDeleteDialogVisible(false)}
-              style={{
-                padding: "10px 20px",
-                border: "none",
-                borderRadius: "4px",
-                backgroundColor: "#6c757d",
-                color: "#fff",
-                cursor: "pointer",
-              }}
+              className="btn-cancel"
             >
               Cancelar
             </button>
             <button
               onClick={handleDelete}
-              style={{
-                padding: "10px 20px",
-                border: "none",
-                borderRadius: "4px",
-                backgroundColor: "#dc3545",
-                color: "#fff",
-                cursor: "pointer",
-              }}
+              className="btn-delete-confirm"
             >
               Eliminar
             </button>
           </div>
         }
       >
-        <p>¿Está seguro de que desea eliminar este registro?</p>
+        <p className="dialog-text">¿Está seguro de que desea eliminar este registro?</p>
       </Dialog>
+      
+      {/* Overlay de carga */}
       {isUploading && (
-        <div style={spinnerOverlayStyle}>
-          <ProgressSpinner style={{ color: "#0D1B2A" }} /> {/* Cambiar color del spinner */}
+        <div className="spinner-overlay">
+          <div className="spinner-container">
+            <ProgressSpinner style={{ width: '50px', height: '50px' }} strokeWidth="4" fill="#E0E1DD" animationDuration=".5s" />
+            <p className="spinner-text">Procesando archivo...</p>
+          </div>
         </div>
       )}
-      <h2>Listado de movimientos</h2>
-      <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+      
+      {/* Cabecera de la página */}
+      <div className="header">
+        <h1 className="title">Gestión de Movimientos</h1>
+        <p className="subtitle">Consulta y administración de registros financieros</p>
+      </div>
+      
+      {/* Barra de acciones */}
+      <div className="action-bar">
         <button
           onClick={() => setShowAddForm(true)}
-          style={{
-            padding: "10px 20px",
-            border: "none",
-            borderRadius: "4px",
-            backgroundColor: "#0D1B2A", // Fondo verde
-            color: "#fff", // Texto blanco
-            cursor: "pointer",
-            fontSize: "16px",
-          }}
+          className="btn-primary"
         >
+          <i className="pi pi-plus" style={{marginRight: '8px'}}></i>
           Nuevo registro
         </button>
         <label
           htmlFor="csvUpload"
-          style={{
-            padding: "10px 20px",
-            border: "none",
-            borderRadius: "4px",
-            backgroundColor: "#415A77", // Cambiar color del botón de carga masiva
-            color: "#fff",
-            cursor: "pointer",
-            fontSize: "16px",
-          }}
+          className="btn-secondary"
         >
+          <i className="pi pi-upload" style={{marginRight: '8px'}}></i>
           Carga masiva
         </label>
         <input
@@ -293,32 +282,25 @@ function MovimientoResumen() {
         <a
           href="/plantilla.csv"
           download="plantilla.csv"
-          style={{
-            padding: "10px 20px",
-            border: "none",
-            borderRadius: "4px",
-            backgroundColor: "#778DA9",
-            color: "#fff",
-            textDecoration: "none",
-            fontSize: "16px",
-            display: "flex",
-            alignItems: "center",
-            gap: "5px",
-          }}
+          className="btn-tertiary"
         >
-          <i className="pi pi-download"></i> Descargar plantilla
+          <i className="pi pi-download" style={{marginRight: '8px'}}></i>
+          Descargar plantilla
         </a>
       </div>
+      
+      {/* Formularios modales - mantener sin cambios */}
       {showAddForm && (
         <AddCarga
           onCancel={() => setShowAddForm(false)}
           onSuccess={() => {
             setShowAddForm(false);
-            fetchMovimientos(); // Recargar movimientos
+            fetchMovimientos();
           }}
           user={user}
         />
       )}
+      
       {selectedMovimiento && (
         <AddCarga
           onCancel={handleCloseView}
@@ -326,82 +308,105 @@ function MovimientoResumen() {
           isReadOnly={true}
         />
       )}
+      
+      {/* Mensaje de error */}
       {errorMessage && (
-        <div style={{ color: "red", marginTop: "10px" }}>
-          <strong>{errorMessage}</strong>
+        <div className="error-message">
+          <i className="pi pi-exclamation-circle" style={{marginRight: '8px'}}></i>
+          {errorMessage}
         </div>
       )}
-      {loading ? (
-        <p>Cargando datos...</p>
-      ) : (
-        <DataTable
-          value={movimientos}
-          dataKey="MOV_Movimiento"
-          tableStyle={{ minWidth: "50rem", marginTop: "20px" }}
-          showGridlines // Habilitar líneas de división
-          footer={renderFooter()}
-        >
-          <Column field="MOV_Movimiento" header="Numero de Movimiento" style={{ width: "15%" }}></Column>
-          <Column field="MOV_id" header="Referencia" style={{ width: "15%" }}></Column>
-          <Column field="MOV_Descripcion" header="Descripción" style={{ width: "20%" }}></Column>
-          <Column field="CuentaBancaria" header="Cuenta Bancaria" style={{ width: "15%" }}></Column>
-          <Column field="Moneda" header="Moneda" style={{ width: "10%" }}></Column>
-          <Column field="TipoMovimiento" header="Tipo Movimiento" style={{ width: "10%" }}></Column>
-          <Column field="NombreUsuario" header="Usuario" style={{ width: "10%" }}></Column>
-          <Column
-            field="MOV_Fecha_Mov"
-            header="Fecha"
-            body={(rowData) => formatDate(rowData.MOV_Fecha_Mov)}
-            style={{ width: "10%" }}
-          ></Column>
-          <Column
-            field="MOV_Valor_GTQ"
-            header="Debe"
-            body={(rowData) => (rowData.MOV_Valor_GTQ > 0 ? rowData.MOV_Valor_GTQ : "-")}
-            style={{ width: "10%" }}
-          ></Column>
-          <Column
-            field="MOV_Valor_GTQ"
-            header="Haber"
-            body={(rowData) => (rowData.MOV_Valor_GTQ < 0 ? Math.abs(rowData.MOV_Valor_GTQ) : "-")}
-            style={{ width: "10%" }}
-          ></Column>
-          <Column
-            body={(rowData) => (
-              <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-                <button
-                  onClick={() => handleView(rowData)}
-                  style={{
-                    padding: "5px",
-                    border: "none",
-                    borderRadius: "4px",
-                    backgroundColor: "#778da9", // Fondo azul claro
-                    color: "#0d47a1", // Ícono azul oscuro
-                    cursor: "pointer",
-                  }}
-                >
-                  <i className="pi pi-eye"></i> {/* Ícono de ojo */}
-                </button>
-                <button
-                  onClick={() => confirmDelete(rowData.MOV_Movimiento)}
-                  style={{
-                    padding: "5px",
-                    border: "none",
-                    borderRadius: "4px",
-                    backgroundColor: "#ffebee", // Fondo rojo claro
-                    color: "#b71c1c", // Ícono rojo oscuro
-                    cursor: "pointer",
-                  }}
-                >
-                  <i className="pi pi-trash"></i> {/* Ícono de eliminar */}
-                </button>
+      
+      {/* Contenedor de la tabla */}
+      <div className="table-container">
+        {loading ? (
+          <div className="loading-container">
+            <ProgressSpinner style={{ width: '40px', height: '40px' }} strokeWidth="4" fill="#E0E1DD" animationDuration=".5s" />
+            <p>Cargando datos...</p>
+          </div>
+        ) : (
+          <DataTable
+            value={movimientos}
+            dataKey="MOV_Movimiento"
+            showGridlines
+            footer={() => (
+              <div className="table-footer">
+                <span>Total Debe: <strong className="valor-positivo">
+                  {new Intl.NumberFormat("es-GT", { style: "currency", currency: "GTQ" }).format(totalDebe)}
+                </strong></span> 
+                <span>Total Haber: <strong className="valor-negativo">
+                  {new Intl.NumberFormat("es-GT", { style: "currency", currency: "GTQ" }).format(totalHaber)}
+                </strong></span>
               </div>
             )}
-            header="Acciones"
-            style={{ width: "15%" }}
-          ></Column>
-        </DataTable>
-      )}
+            emptyMessage="No se encontraron movimientos"
+            rowHover
+            paginator
+            rows={8}
+            rowsPerPageOptions={[8, 16, 32]}
+            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+          >
+            <Column field="MOV_Movimiento" header="# Movimiento" sortable></Column>
+            <Column field="MOV_id" header="Referencia" sortable></Column>
+            <Column field="MOV_Descripcion" header="Descripción" sortable style={{width: '20%'}}></Column>
+            <Column field="CuentaBancaria" header="Cuenta Bancaria"></Column>
+            <Column field="Moneda" header="Moneda"></Column>
+            <Column field="TipoMovimiento" header="Tipo"></Column>
+            <Column field="NombreUsuario" header="Usuario"></Column>
+            <Column
+              field="MOV_Fecha_Mov"
+              header="Fecha"
+              body={(rowData) => formatDate(rowData.MOV_Fecha_Mov)}
+              sortable
+            ></Column>
+            <Column
+              field="MOV_Valor_GTQ"
+              header="Debe"
+              body={(rowData) => rowData.MOV_Valor_GTQ > 0 ? (
+                <span className="valor-positivo">
+                  {new Intl.NumberFormat("es-GT", { style: "currency", currency: "GTQ" }).format(rowData.MOV_Valor_GTQ)}
+                </span>
+              ) : "-"}
+              sortable
+            ></Column>
+            <Column
+              field="MOV_Valor_GTQ"
+              header="Haber"
+              body={(rowData) => rowData.MOV_Valor_GTQ < 0 ? (
+                <span className="valor-negativo">
+                  {new Intl.NumberFormat("es-GT", { style: "currency", currency: "GTQ" }).format(Math.abs(rowData.MOV_Valor_GTQ))}
+                </span>
+              ) : "-"}
+              sortable
+            ></Column>
+            <Column
+              body={(rowData) => (
+                <div className="action-buttons">
+                  <button
+                    onClick={() => handleView(rowData)}
+                    className="btn-view"
+                    title="Ver detalle"
+                  >
+                    <i className="pi pi-eye"></i>
+                  </button>
+                  <button
+                    onClick={() => confirmDelete(rowData.MOV_Movimiento)}
+                    className="btn-delete"
+                    title="Eliminar registro"
+                  >
+                    <i className="pi pi-trash"></i>
+                  </button>
+                </div>
+              )}
+              header="Acciones"
+              style={{width: '100px', textAlign: 'center'}}
+              frozen
+              alignFrozen="right"
+            ></Column>
+          </DataTable>
+        )}
+      </div>
     </div>
   );
 }

@@ -27,3 +27,407 @@
   width: 14px;
   height: 14px;
 }
+  
+/* Agregar estos estilos nuevos para mejorar los componentes PrimeReact */
+.p-datatable .p-datatable-header {
+  background-color: #0D1B2A;
+  color: white;
+  padding: 1rem;
+  font-weight: 600;
+}
+
+.p-datatable .p-paginator {
+  background-color: #E0E1DD;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background-color: #0D1B2A;
+  color: white;
+  padding: 1rem;
+  border-width: 0;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+  background-color: rgba(224, 225, 221, 0.7); /* Tono similar al fondo pero más sólido */
+  transition: background-color 0.2s;
+}
+
+.p-datatable .p-datatable-tbody > tr:nth-child(even) {
+  background-color: rgba(119, 141, 169, 0.15); /* Un tono azulado muy sutil */
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+  background-color: rgba(119, 141, 169, 0.1); /* Color hover consistente */
+}
+
+/* Estilo para valores positivos y negativos */
+.valor-positivo {
+  color: #388e3c !important;
+  font-weight: 500;
+}
+
+.valor-negativo {
+  color: #d32f2f !important;
+  font-weight: 500;
+}
+
+/* Estilos para el componente Carga.jsx */
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 30px 30px;
+  background-color: #E0E1DD; /* Este es el color correcto, igual que en HomePage */
+  min-height: calc(100vh - 64px);
+  font-family: 'Open Sans', sans-serif;
+  color: #0D1B2A;
+}
+
+body {
+  background-color: #E0E1DD;
+}
+
+.p-dialog {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.p-dialog .p-dialog-content {
+  background-color: #E0E1DD; /* Cambiar de blanco al color de fondo principal */
+  color: #0D1B2A;
+}
+
+/* Mantener los estilos existentes y añadir/modificar los siguientes: */
+
+/* Estilo para el contenedor principal - ya existente */
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 30px 30px;
+  background-color: #E0E1DD;
+  min-height: calc(100vh - 64px);
+  font-family: 'Open Sans', sans-serif;
+  color: #0D1B2A;
+}
+
+/* Estilos para encabezados */
+.header {
+  margin-bottom: 24px;
+  border-bottom: 2px solid #778DA9;
+  padding-bottom: 10px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #0D1B2A;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #415A77;
+  margin: 8px 0 0;
+}
+
+/* Estilos para la barra de acciones */
+.action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+  align-items: center;
+}
+
+/* Botones con estilos de la paleta */
+.btn-primary {
+  background-color: #0D1B2A;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #1A2C3A;
+}
+
+.btn-secondary {
+  background-color: #415A77;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+}
+
+.btn-secondary:hover {
+  background-color: #506B88;
+}
+
+.btn-tertiary {
+  background-color: #778DA9;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.btn-tertiary:hover {
+  background-color: #869EB5;
+}
+
+/* Botones de acción en tabla */
+.btn-view {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background-color: #E0E1DD;
+  color: #1565C0;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-view:hover {
+  background-color: #D0D1CD;
+}
+
+.btn-delete {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background-color: #ffebee;
+  color: #d32f2f;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-delete:hover {
+  background-color: #ffcdd2;
+}
+
+/* Contenedor de botones de acción */
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Estilos para el contenedor de tabla */
+.table-container {
+  background-color: rgba(65, 90, 119, 0.05); /* Color muy sutil en vez de blanco */
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+/* Estilos para mensajes de error */
+.error-message {
+  background-color: rgba(211, 47, 47, 0.1);
+  color: #d32f2f;
+  padding: 12px 16px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+/* Estilos para diálogos */
+.dialog-header {
+  background-color: #0D1B2A;
+  color: white;
+  padding: 15px 20px;
+}
+
+.dialog-content {
+  padding: 20px;
+}
+
+.dialog-text {
+  font-size: 16px;
+  color: #415A77;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 15px 20px;
+  background-color: #f5f5f5;
+}
+
+.btn-cancel {
+  background-color: #E0E1DD;
+  color: #415A77;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.btn-cancel:hover {
+  background-color: #D0D1CD;
+}
+
+.btn-delete-confirm {
+  background-color: #d32f2f;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.btn-delete-confirm:hover {
+  background-color: #b71c1c;
+}
+
+/* Estilos para spinner overlay */
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(13, 27, 42, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.spinner-container {
+  background-color: #E0E1DD; /* Cambiar de blanco al color de fondo principal */
+  padding: 30px 50px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.spinner-text {
+  margin-top: 15px;
+  color: #0D1B2A;
+  font-weight: 500;
+}
+
+/* Estilos para el footer de la tabla */
+.table-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  padding: 0;
+  font-weight: 500;
+  color: #415A77;
+  background-color: transparent !important;
+}
+
+/* Estado de carga */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 0;
+  color: #415A77;
+  gap: 15px;
+}
+
+/* Estilo para columnas congeladas */
+.p-datatable .p-datatable-tbody > tr > td.p-frozen-column {
+  background-color: rgba(224, 225, 221, 0.85); /* Más opaco para columnas congeladas */
+}
+
+/* Asegurar que el paginador también respeta la paleta */
+.p-paginator {
+  background-color: rgba(224, 225, 221, 0.7) !important; /* Consistente con las filas */
+}
+
+/* Añadir borde sutil para distinguir filas */
+.p-datatable .p-datatable-tbody > tr > td {
+  border-color: rgba(119, 141, 169, 0.1);
+}
+
+/* Estilo para el encabezado del diálogo */
+.p-dialog .p-dialog-header {
+  background-color: #0D1B2A;
+  color: white;
+}
+
+/* Estilo para el footer del diálogo */
+.p-dialog .p-dialog-footer {
+  background-color: rgba(224, 225, 221, 0.8);
+  border-top: 1px solid rgba(119, 141, 169, 0.2);
+}
+
+/* Añadir estas reglas específicas para eliminar el fondo blanco del área de totales */
+
+/* Asegurar que el footer de la tabla no tenga fondo blanco */
+.p-datatable .p-datatable-footer {
+  background-color: rgba(65, 90, 119, 0.05) !important; /* Igual que el contenedor de tabla */
+  border-top: 1px solid rgba(119, 141, 169, 0.1);
+  padding: 15px 20px !important;
+  border-radius: 0 0 8px 8px;
+}
+
+/* Estilo específico para el div dentro del footer que contiene los totales */
+.table-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  padding: 0;
+  font-weight: 500;
+  color: #415A77;
+  background-color: transparent !important;
+}
+
+/* Asegurar que el paginador también tiene el fondo correcto */
+.p-paginator-bottom {
+  background-color: rgba(65, 90, 119, 0.05) !important;
+  border-top: 1px solid rgba(119, 141, 169, 0.1);
+}
+
+/* Estilos para los botones de paginación */
+.p-paginator .p-paginator-element {
+  background-color: rgba(224, 225, 221, 0.7);
+  border: none;
+  color: #415A77;
+}
+
+.p-paginator .p-paginator-element.p-highlight {
+  background-color: #0D1B2A;
+  color: white;
+}

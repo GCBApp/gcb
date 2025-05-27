@@ -15,6 +15,7 @@ const HomePage = () => {
   const [ultimoMovimiento, setUltimoMovimiento] = useState(null);
   const [showCambioModal, setShowCambioModal] = useState(false);
   const [tipoCambioData, setTipoCambioData] = useState(null);
+  const [showResumenModal, setShowResumenModal] = useState(false);
   const navigate = useNavigate();
   const { setIsAuthenticated } = useAuth();
 
@@ -119,37 +120,17 @@ const HomePage = () => {
     fetchTipoCambio();
   };
 
-  // Función para descargar datos de movimientos como CSV
-  const handleDescargarCSV = () => {
-    try {
-      // Convertir los datos de movimientos a formato CSV
-      let csvContent = "data:text/csv;charset=utf-8,";
-      
-      // Encabezados
-      csvContent += "Fecha,Descripción,Monto (GTQ)\n";
-      
-      // Agregar filas de datos
-      movimientos.forEach(mov => {
-        const fecha = new Date(mov.MOV_Fecha_Mov).toLocaleDateString();
-        const descripcion = mov.MOV_Descripcion.replace(/,/g, " "); // Evitar problemas con comas
-        const monto = mov.MOV_Valor_GTQ;
-        csvContent += `${fecha},"${descripcion}",${monto}\n`;
-      });
-      
-      // Crear un elemento de descarga
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `movimientos-${new Date().toISOString().split('T')[0]}.csv`);
-      document.body.appendChild(link);
-      
-      // Descargar el archivo
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error("Error al generar CSV:", error);
-      alert("Error al generar el archivo CSV");
-    }
+  // Añadir estas funciones para manejar las nuevas acciones
+  const handleResumenClick = () => {
+    // Calcular algunos datos básicos de resumen
+    const ingresosTotal = movimientos.filter(mov => mov.MOV_Valor_GTQ > 0)
+      .reduce((sum, mov) => sum + mov.MOV_Valor_GTQ, 0);
+    
+    const egresosTotal = movimientos.filter(mov => mov.MOV_Valor_GTQ < 0)
+      .reduce((sum, mov) => sum + Math.abs(mov.MOV_Valor_GTQ), 0);
+    
+    // Actualizar el estado para estos valores si es necesario
+    setShowResumenModal(true);
   };
 
   return (
@@ -181,53 +162,22 @@ const HomePage = () => {
 
           <div style={cardStyle}>
             <div style={cardIconStyle}>
-              <span style={iconStyle}>📊</span>
-            </div>
-            <div style={cardContentStyle}>
-              <h3 style={cardTitleStyle}>Último Movimiento</h3>
-              <p style={cardValueStyle}>
-                {ultimoMovimiento ? (
-                  <span>
-                    {new Date(ultimoMovimiento.MOV_Fecha_Mov).toLocaleDateString()}
-                    <br />
-                    <span style={{
-                      color: ultimoMovimiento.MOV_Valor_GTQ >= 0 ? "#388e3c" : "#d32f2f",
-                      fontWeight: "500"
-                    }}>
-                      {new Intl.NumberFormat("es-GT", { style: "currency", currency: "GTQ" }).format(ultimoMovimiento.MOV_Valor_GTQ)}
-                    </span>
-                  </span>
-                ) : (
-                  "No hay movimientos"
-                )}
-              </p>
-            </div>
-          </div>
-
-          <div style={cardStyle}>
-            <div style={cardIconStyle}>
               <span style={iconStyle}>🔄</span>
             </div>
             <div style={cardContentStyle}>
               <h3 style={cardTitleStyle}>Acciones Rápidas</h3>
               <div style={quickLinksStyle}>
-                <button style={quickLinkButtonStyle} onClick={() => navigate("/nuevo-movimiento")}>
-                  Nuevo Movimiento
-                </button>
-                <button style={quickLinkButtonStyle} onClick={() => navigate("/reportes")}>
-                  Generar Reporte
+                <button 
+                  style={quickLinkButtonStyle} 
+                  onClick={handleResumenClick}
+                >
+                  Resumen Mensual
                 </button>
                 <button 
                   style={quickLinkButtonStyle} 
                   onClick={handleTipoCambioClick}
                 >
                   Ver Tipo de Cambio
-                </button>
-                <button 
-                  style={quickLinkButtonStyle} 
-                  onClick={handleDescargarCSV}
-                >
-                  Descargar CSV
                 </button>
               </div>
             </div>
@@ -405,6 +355,70 @@ const HomePage = () => {
               <button 
                 style={{...viewAllButtonStyle, width: "100%"}} 
                 onClick={() => setShowCambioModal(false)}
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Resumen Mensual */}
+      {showResumenModal && (
+        <div style={modalOverlayStyle}>
+          <div style={modalStyle}>
+            <div style={modalHeaderStyle}>
+              <h3 style={{margin: 0}}>Resumen Mensual</h3>
+              <button 
+                style={closeButtonStyle} 
+                onClick={() => setShowResumenModal(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div style={modalBodyStyle}>
+              <div style={{marginBottom: '20px'}}>
+                <h4 style={{color: '#415A77', marginBottom: '15px'}}>Balance General</h4>
+                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '10px'}}>
+                  <span>Total Ingresos:</span>
+                  <span style={{color: '#388e3c', fontWeight: '500'}}>
+                    {new Intl.NumberFormat("es-GT", { style: "currency", currency: "GTQ" })
+                      .format(movimientos.filter(mov => mov.MOV_Valor_GTQ > 0)
+                      .reduce((sum, mov) => sum + mov.MOV_Valor_GTQ, 0))}
+                  </span>
+                </div>
+                <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '10px'}}>
+                  <span>Total Egresos:</span>
+                  <span style={{color: '#d32f2f', fontWeight: '500'}}>
+                    {new Intl.NumberFormat("es-GT", { style: "currency", currency: "GTQ" })
+                      .format(movimientos.filter(mov => mov.MOV_Valor_GTQ < 0)
+                      .reduce((sum, mov) => sum + Math.abs(mov.MOV_Valor_GTQ), 0))}
+                  </span>
+                </div>
+                <div style={{display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #ddd', paddingTop: '10px'}}>
+                  <span><strong>Balance:</strong></span>
+                  <span style={{
+                    fontWeight: '600',
+                    color: saldoTotal >= 0 ? '#388e3c' : '#d32f2f'
+                  }}>
+                    {new Intl.NumberFormat("es-GT", { style: "currency", currency: "GTQ" }).format(saldoTotal)}
+                  </span>
+                </div>
+              </div>
+              <div style={{marginBottom: '20px'}}>
+                <h4 style={{color: '#415A77', marginBottom: '15px'}}>Actividad Reciente</h4>
+                <div style={{color: '#666', fontSize: '14px'}}>
+                  <p>Número de movimientos este mes: <strong>{movimientos.length}</strong></p>
+                  <p>Último movimiento: <strong>
+                    {ultimoMovimiento ? new Date(ultimoMovimiento.MOV_Fecha_Mov).toLocaleDateString() : "N/A"}
+                  </strong></p>
+                </div>
+              </div>
+            </div>
+            <div style={modalFooterStyle}>
+              <button 
+                style={{...viewAllButtonStyle, width: "100%"}} 
+                onClick={() => setShowResumenModal(false)}
               >
                 Cerrar
               </button>
