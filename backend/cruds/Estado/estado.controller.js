@@ -1,3 +1,5 @@
+// Revisión y corrección para listar todos los estados correctamente, sin JOINs innecesarios
+
 import sql from "mssql";
 import { DB_DATABASE, DB_HOST, DB_PASSWORD, DB_USER } from "../../config.js";
 
@@ -12,32 +14,16 @@ const sqlConfig = {
   },
 };
 
+// Listar SOLO los estados (para catálogos y combos)
 export const getAllEstados = async (req, res) => {
   try {
     const pool = await sql.connect(sqlConfig);
+    // Trae solo el catálogo de estados, sin GROUP BY ni duplicados
     const result = await pool.request().query(`
-      SELECT 
-        e.EST_Estado,
-        e.MOV_movimiento,
-        m.MOV_id,
-        m.MOV_Descripcion,
-        e.COM_Compensacion,
-        c.COM_Descripción AS COM_Descripcion,
-        e.EST_Descripcion,
-        m.MOV_Valor,
-        c.COM_Valor,
-        m.MOV_Valor_GTQ,
-        m.MOV_Fecha_Registro,
-        m.MOV_Fecha_Mov,
-        u.US_nombre AS NombreUsuario,
-        tm.TM_descripcion AS TipoMovimiento,
-        cb.CUB_Nombre AS CuentaBancaria
-      FROM GCB_ESTADO e
-      INNER JOIN GCB_MOVIMIENTO m ON e.MOV_movimiento = m.MOV_Movimiento
-      INNER JOIN GCB_COMPENSACION c ON e.COM_Compensacion = c.COM_Compensacion
-      INNER JOIN GCB_USUARIOS u ON m.US_Usuario = u.US_Usuario
-      INNER JOIN GCB_TIPO_MOVIMIENTO tm ON m.TM_Tipomovimiento = tm.TM_Tipomovimiento
-      INNER JOIN GCB_CUENTA_BANCARIA cb ON m.CUB_Cuentabancaria = cb.CUB_Cuentabancaria
+      SELECT DISTINCT EST_Estado, EST_Descripcion
+      FROM GCB_ESTADO
+      WHERE EST_Estado IS NOT NULL AND EST_Descripcion IS NOT NULL
+      ORDER BY EST_Descripcion
     `);
     res.json(result.recordset);
   } catch (err) {
@@ -90,12 +76,14 @@ export const updateEstado = async (req, res) => {
   const { id } = req.params;
   const { EST_Descripcion } = req.body;
 
-  if (!EST_Descripcion) {
-    return res.status(400).send("El campo EST_Descripcion es requerido.");
+  // Solo permitir valores válidos
+  const ESTADOS_VALIDOS = ["CONCILIADO", "NO CONCILIADO", "EN REVISIÓN", "PENDIENTE"];
+  if (!EST_Descripcion || !ESTADOS_VALIDOS.includes(EST_Descripcion)) {
+    return res.status(400).send("El campo EST_Descripcion es requerido y debe ser un estado válido.");
   }
 
   try {
-    const pool = await sql.connect(sqlConfig); // Conexión a la base de datos
+    const pool = await sql.connect(sqlConfig);
     const result = await pool
       .request()
       .input("descripcion", sql.VarChar(50), EST_Descripcion)

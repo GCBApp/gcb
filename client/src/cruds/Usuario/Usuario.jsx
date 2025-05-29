@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import AddUsuario from "./AddUsuario";
-import EditUsuario from "./EditUsuario";
-import ConfirmDelete from "./ConfirmDeleteUsuario";
+import AddEmpleado from "./AddEmpleado";
+import EditEmpleado from "./EditEmpleado";
+import ConfirmDeleteEmpleado from "./ConfirmDeleteEmpleado";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
-function Usuario() {
-  const [usuarios, setUsuarios] = useState([]);
+function Empleado() {
+  const [empleados, setEmpleados] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [editData, setEditData] = useState(null);
@@ -14,42 +14,42 @@ function Usuario() {
   const [deleteId, setDeleteId] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const fetchUsuarios = async () => {
+  const fetchEmpleados = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/usuario`);
+      const res = await fetch(`${API_URL}/api/empleado`);
       const data = await res.json();
-      setUsuarios(data);
+      setEmpleados(data);
     } catch (err) {
-      console.error("Error al obtener los usuarios:", err);
+      console.error("Error al obtener los empleados:", err);
     }
   };
 
-  const deleteUsuario = async () => {
+  const deleteEmpleado = async () => {
     if (!deleteId) {
       console.error("No hay ID para eliminar");
       return;
     }
 
     try {
-      const res = await fetch(`${API_URL}/api/usuario/${deleteId}`, {
+      const res = await fetch(`${API_URL}/api/empleado/${deleteId}`, {
         method: "DELETE",
       });
 
       if (res.ok) {
         console.log(`Registro con ID ${deleteId} eliminado correctamente`);
-        setUsuarios((prev) => prev.filter((item) => item.US_usuario !== deleteId));
+        setEmpleados((prev) => prev.filter((item) => item.EM_empleado !== deleteId));
         setShowConfirmDelete(false);
         setDeleteId(null);
         setErrorMessage("");
       } else {
         const errorText = await res.text();
-        console.error("Error al eliminar el usuario:", errorText);
+        console.error("Error al eliminar el empleado:", errorText);
         setShowConfirmDelete(false);
         setErrorMessage("No se puede eliminar el registro porque está relacionado con otros datos.");
         setTimeout(() => setErrorMessage(""), 3000);
       }
     } catch (err) {
-      console.error("Error al eliminar el usuario:", err);
+      console.error("Error al eliminar el empleado:", err);
       setShowConfirmDelete(false);
       setErrorMessage("Ocurrió un error al intentar eliminar el registro.");
       setTimeout(() => setErrorMessage(""), 3000);
@@ -57,31 +57,31 @@ function Usuario() {
   };
 
   useEffect(() => {
-    fetchUsuarios();
+    fetchEmpleados();
   }, []);
 
   return (
     <div>
       {showAddForm ? (
-        <AddUsuario
+        <AddEmpleado
           onCancel={() => setShowAddForm(false)}
           onSuccess={() => {
             setShowAddForm(false);
-            fetchUsuarios();
+            fetchEmpleados();
           }}
         />
       ) : showEditForm ? (
-        <EditUsuario
+        <EditEmpleado
           initialData={editData}
           onCancel={() => setShowEditForm(false)}
           onSuccess={() => {
             setShowEditForm(false);
-            fetchUsuarios();
+            fetchEmpleados();
           }}
         />
       ) : (
         <>
-          <h2>Usuarios</h2>
+          <h2>Empleados</h2>
           <button onClick={() => setShowAddForm(true)}>Agregar</button>
           {errorMessage && (
             <div style={{ color: "red", marginTop: "10px" }}>
@@ -92,21 +92,27 @@ function Usuario() {
             <thead>
               <tr>
                 <th>ID</th>
+                <th>Usuario</th>
                 <th>Tipo Usuario</th>
                 <th>Nombre</th>
+                <th>Apellido</th>
                 <th>Correo</th>
-                <th>Contraseña</th>
+                <th>Teléfono</th>
+                <th>Dirección</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {usuarios.map((item) => (
-                <tr key={item.US_usuario}>
-                  <td>{item.US_usuario || "N/A"}</td>
-                  <td>{item.TU_tipousuario || "N/A"}</td>
-                  <td>{item.US_nombre}</td>
-                  <td>{item.US_correo}</td>
-                  <td>{item.US_contraseña}</td>
+              {empleados.map((item) => (
+                <tr key={item.EM_empleado}>
+                  <td>{item.EM_empleado}</td>
+                  <td>{item.EM_usuario}</td>
+                  <td>{item.TU_tipousuario}</td>
+                  <td>{item.EM_nombre}</td>
+                  <td>{item.EM_apellido}</td>
+                  <td>{item.EM_correo}</td>
+                  <td>{item.EM_telefono}</td>
+                  <td>{item.EM_direccion}</td>
                   <td>
                     <button
                       onClick={() => {
@@ -118,7 +124,7 @@ function Usuario() {
                     </button>
                     <button
                       onClick={() => {
-                        setDeleteId(item.US_usuario);
+                        setDeleteId(item.EM_empleado);
                         setShowConfirmDelete(true);
                       }}
                     >
@@ -133,9 +139,9 @@ function Usuario() {
       )}
 
       {showConfirmDelete && (
-        <ConfirmDelete
+        <ConfirmDeleteEmpleado
           message="¿Desea eliminar el registro?"
-          onConfirm={deleteUsuario}
+          onConfirm={deleteEmpleado}
           onCancel={() => {
             setShowConfirmDelete(false);
             setDeleteId(null);
@@ -146,4 +152,4 @@ function Usuario() {
   );
 }
 
-export default Usuario;
+export default Empleado;

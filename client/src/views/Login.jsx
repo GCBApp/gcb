@@ -10,6 +10,7 @@ function Login() {
   const [errorMessage, setErrorMessage] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [fadeIn, setFadeIn] = useState(true);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { setIsAuthenticated } = useAuth();
   const intervalRef = useRef(null); // Referencia para almacenar el ID del intervalo
@@ -79,22 +80,21 @@ function Login() {
   // Manejo del login
   const handleLogin = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
+    setErrorMessage("");
     try {
-      const response = await fetch(`${API_URL}/api/usuario`);
-      const users = await response.json();
-
-      const user = users.find(
-        (u) =>
-          (u.US_nombre === username || u.US_correo === username) &&
-          u.US_contraseña === password
-      );
-
-      if (user) {
+      // Cambia la ruta a /api/empleado/login
+      const response = await fetch(`${API_URL}/api/empleado/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ usuario: username, contrasena: password }),
+      });
+      const data = await response.json();
+      if (data.success) {
         setErrorMessage("");
         setIsAuthenticated(true);
-        localStorage.setItem("user", JSON.stringify(user));
-        navigate("/HomePage", { state: { user } });
+        localStorage.setItem("empleado", JSON.stringify(data.empleado));
+        navigate("/HomePage", { state: { user: data.empleado } });
       } else {
         setErrorMessage("Usuario o contraseña incorrectos.");
       }
@@ -102,6 +102,7 @@ function Login() {
       console.error("Error al iniciar sesión:", err);
       setErrorMessage("Ocurrió un error al intentar iniciar sesión.");
     }
+    setLoading(false);
   };
 
   return (
@@ -177,8 +178,8 @@ function Login() {
               </div>
             )}
             
-            <button type="submit" style={buttonStyle}>
-              Iniciar sesion
+            <button type="submit" style={buttonStyle} disabled={loading}>
+              {loading ? "Cargando..." : "Iniciar sesion"}
             </button>
           </form>
         </div>

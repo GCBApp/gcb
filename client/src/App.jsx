@@ -8,10 +8,11 @@ import ProfilePage from "./pages/ProfilePage";
 import CrudPage from "./pages/CrudPage";
 import Login from "./views/Login";
 import UserInfo from "./views/UserInfo";
-import MovimientoResumen from "./views/Carga";
-import Conciliacion from "./pages/conciliacion";
+import ConciliacionPage from "./pages/ConciliacionPage";
 import CompensasionPage from "./pages/CompensasionPage";
-import AddAccount from "./pages/AddAcount";
+// import AddAccount from "./pages/AddAcount";
+import EditAccount from "./pages/EditAccount";
+import PeriodosPage from "./pages/PeriodosPage";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
 function AppContent() {
@@ -27,12 +28,13 @@ function AppContent() {
           <Route path="/" element={<Login />} />
           <Route path="/HomePage" element={<HomePage />} />
           <Route path="/accounts" element={<AccountsPage />} />
-          <Route path="/carga" element={<MovimientoResumen />} />
+          <Route path="/edit-account/:id" element={<EditAccount />} />
+          <Route path="/movements" element={<MovementsPage />} />
           <Route path="/profile" element={<UserInfo />} />
           <Route path="/cruds" element={<CrudPage />} />
-          <Route path="/conciliacion" element={<Conciliacion />} />
-          <Route path="/Addacount" element={<AddAccount />} />
-          <Route path="/compensasion" element={<CompensasionPage />} />
+          <Route path="/conciliacion" element={<ConciliacionPage />} />
+          {/* <Route path="/compensasion" element={<CompensasionPage />} /> */}
+          <Route path="/periodos" element={<PeriodosPage />} />
         </Routes>
       </main>
     </div>

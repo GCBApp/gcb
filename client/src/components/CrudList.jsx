@@ -8,22 +8,32 @@ import TipoMovimiento from "../cruds/TipoMovimiento/TipoMovimiento";
 import Movimiento from "../cruds/Movimiento/Movimiento";
 import Compensacion from "../cruds/Compensacion/Compensacion"; 
 import Estado from "../cruds/Estado/Estado";
-
-// Agregar la importación
+import TipoCuentaBancaria from "../cruds/TipoCuentaBancaria/TipoCuentaBancaria";
+import Periodo from "../cruds/Periodo/Periodo";
+import Conciliacion from "../cruds/Conciliacion/Conciliacion";
+import DetalleConciliacion from "../cruds/DetalleConciliacion/DetalleConciliacion";
+import HistorialSaldos from "../cruds/HistorialSaldos/HistorialSaldos";
+import Empleado from "../cruds/Empleado/Empleado";
 
 function TableList() {
   const [selectedTable, setSelectedTable] = useState(null);
 
   const tables = [
-    { name: "Tipo Usuario", component: <TipoUsuario /> },
-    { name: "Moneda", component: <Moneda /> },
-    { name: "Usuario", component: <Usuario /> },
+    { name: "Tipo Cuenta Bancaria", component: <TipoCuentaBancaria /> },
+    { name: "Periodo", component: <Periodo /> },
+    { name: "Conciliacion", component: <Conciliacion /> },
+    { name: "Detalle Conciliacion", component: <DetalleConciliacion /> },
+    { name: "Historial Saldos", component: <HistorialSaldos /> },
+    { name: "Empleado", component: <Empleado /> },
     { name: "Bancos", component: <Bancos /> },
+    { name: "Moneda", component: <Moneda /> },
     { name: "Cuentas Bancarias", component: <CuentaBancaria /> },
+    { name: "Usuario", component: <Usuario /> },
+    { name: "Tipo Usuario", component: <TipoUsuario /> },
     { name: "Tipos de Movimiento", component: <TipoMovimiento /> },
-    { name: "Movimientos", component: <Movimiento /> }, // Agregar a la lista
+    { name: "Movimientos", component: <Movimiento /> },
     { name: "Compensacion", component: <Compensacion /> },
-    { name: "Estado", component: <Estado/>}
+    { name: "Estado", component: <Estado /> }
   ];
 
   return (

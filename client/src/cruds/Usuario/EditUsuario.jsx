@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
-function EditUsuario({ initialData, onCancel, onSuccess }) {
+function EditEmpleado({ initialData, onCancel, onSuccess }) {
   const [formData, setFormData] = useState(initialData);
   const [tiposUsuario, setTiposUsuario] = useState([]);
 
@@ -26,20 +26,20 @@ function EditUsuario({ initialData, onCancel, onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await fetch(`${API_URL}/api/usuario/${formData.US_usuario}`, {
+      await fetch(`${API_URL}/api/empleado/${formData.US_usuario}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
       onSuccess();
     } catch (err) {
-      console.error("Error al actualizar el usuario:", err);
+      console.error("Error al actualizar el empleado:", err);
     }
   };
 
   return (
     <div>
-      <h2>Editar Usuario</h2>
+      <h2>Editar Empleado</h2>
       <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
         <input
           type="text" // Cambiado de "number" a "text" para reflejar Char(10)
@@ -93,4 +93,4 @@ function EditUsuario({ initialData, onCancel, onSuccess }) {
   );
 }
 
-export default EditUsuario;
+export default EditEmpleado;

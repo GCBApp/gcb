@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import AddCompensacion from "./AddCompensacion";
 import EditCompensacion from "./EditCompensacion";
 import ConfirmDelete from "./ConfirmDeleteCompensacion";
 import ProcessCompensacion from "./ProcessCompensacion"; // Importar el nuevo componente
@@ -8,9 +7,8 @@ const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 function Compensacion() {
   const [compensacion, setCompensacion] = useState([]);
-  const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
-  const [showProcessForm, setShowProcessForm] = useState(false); // Nuevo estado
+  const [showProcessForm, setShowProcessForm] = useState(false);
   const [editData, setEditData] = useState(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -75,15 +73,7 @@ function Compensacion() {
 
   return (
     <div>
-      {showAddForm ? (
-        <AddCompensacion
-          onCancel={() => setShowAddForm(false)}
-          onSuccess={() => {
-            setShowAddForm(false);
-            fetchcompensacion();
-          }}
-        />
-      ) : showEditForm ? (
+      {showEditForm ? (
         <EditCompensacion
           initialData={editData}
           onCancel={() => setShowEditForm(false)}
@@ -112,10 +102,9 @@ function Compensacion() {
         <>
           <h2>Compensaciones</h2>
           <div>
-            <button onClick={() => setShowAddForm(true)}>Agregar</button>
             <button 
               onClick={() => setShowProcessForm(true)}
-              style={{ marginLeft: '10px', backgroundColor: '#4CAF50', color: 'white' }}
+              style={{ marginLeft: '0px', backgroundColor: '#4CAF50', color: 'white' }}
             >
               Procesar Compensación
             </button>

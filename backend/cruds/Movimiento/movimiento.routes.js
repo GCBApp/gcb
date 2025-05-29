@@ -1,5 +1,11 @@
 import { Router } from "express";
-import { getAllMovimientos, createMovimiento, updateMovimiento, deleteMovimiento } from "./movimiento.controller.js";
+import {
+  getAllMovimientos,
+  createMovimiento,
+  updateMovimiento,
+  deleteMovimiento,
+  updateMovimientoEstado
+} from "./movimiento.controller.js";
 
 const router = Router();
 
@@ -14,5 +20,8 @@ router.put("/:id", updateMovimiento);
 
 // Ruta para eliminar movimiento
 router.delete("/:id", deleteMovimiento);
+
+// Ruta para actualizar solo el estado de un movimiento
+router.put("/estado/:id", updateMovimientoEstado);
 
 export default router;

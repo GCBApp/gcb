@@ -6,6 +6,7 @@ import {
   updateUsuario,
   deleteUsuario,
   getTiposUsuario,
+  login,
 } from "../cruds/Usuario/usuario.controller.js";
 
 const router = Router();
@@ -16,5 +17,6 @@ router.post("/", createUsuario);
 router.put("/:id", updateUsuario);
 router.delete("/:id", deleteUsuario);
 router.get("/tipoUsuario", getTiposUsuario);
+router.post("/login", login);
 
 export default router;

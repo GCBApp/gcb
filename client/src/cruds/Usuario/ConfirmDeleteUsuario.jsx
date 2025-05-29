@@ -1,4 +1,4 @@
-function ConfirmDelete({ message, onConfirm, onCancel }) {
+function ConfirmDeleteEmpleado({ message, onConfirm, onCancel }) {
   return (
     <div
       style={{
@@ -63,4 +63,4 @@ function ConfirmDelete({ message, onConfirm, onCancel }) {
   );
 }
 
-export default ConfirmDelete;
+export default ConfirmDeleteEmpleado;

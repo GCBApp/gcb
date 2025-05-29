@@ -168,8 +168,8 @@ function Moneda() {
                 <tr key={item.MON_moneda}>
                   <td>{item.MON_moneda}</td>
                   <td>{item.MON_nombre}</td>
-                  <td>{parseFloat(item.MON_Tipo_Compra).toFixed(5)}</td>
-                  <td>{parseFloat(item.MON_Tipo_Venta).toFixed(5)}</td>
+                  <td>{item.MON_Tipo_Compra}</td>
+                  <td>{item.MON_Tipo_Venta}</td>
                   <td>{item.MON_Fecha_Mov}</td>
                   <td>{item.MON_id_Banguat}</td>
                   <td>

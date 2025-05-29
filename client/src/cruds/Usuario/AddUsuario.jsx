@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
-function AddUsuario({ onCancel, onSuccess }) {
+function AddEmpleado({ onCancel, onSuccess }) {
   const [formData, setFormData] = useState({ US_usuario: "", TU_tipousuario: "", US_nombre: "", US_correo: "", US_contraseña: "" });
   const [errorMessage, setErrorMessage] = useState("");
   const [tiposUsuario, setTiposUsuario] = useState([]);
@@ -27,7 +27,7 @@ function AddUsuario({ onCancel, onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${API_URL}/api/usuario`, {
+      const res = await fetch(`${API_URL}/api/empleado`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -40,14 +40,14 @@ function AddUsuario({ onCancel, onSuccess }) {
         setErrorMessage(errorText);
       }
     } catch (err) {
-      console.error("Error al crear el usuario", err);
+      console.error("Error al crear el empleado", err);
       setErrorMessage("Ocurrió un error al intentar agregar el registro.");
     }
   };
 
   return (
     <div>
-      <h2>Agregar Usuario</h2>
+      <h2>Agregar Empleado</h2>
       {errorMessage && (
         <div style={{ color: "red", marginBottom: "10px" }}>
           <strong>{errorMessage}</strong>
@@ -105,4 +105,4 @@ function AddUsuario({ onCancel, onSuccess }) {
   );
 }
 
-export default AddUsuario;
+export default AddEmpleado;

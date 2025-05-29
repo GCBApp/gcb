@@ -1,77 +1,163 @@
-import { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { Card } from "primereact/card";
+import { InputText } from "primereact/inputtext";
+import { Dropdown } from "primereact/dropdown";
+import { InputNumber } from "primereact/inputnumber";
+import { Button } from "primereact/button";
+import { Toast } from "primereact/toast";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 function AddMovimiento({ onCancel, onSuccess }) {
+  const toast = useRef(null);
+  const [cuentas, setCuentas] = useState([]);
+  const [tipos, setTipos] = useState([]);
   const [formData, setFormData] = useState({
-    MOV_Movimiento: "", // Nuevo campo para la llave primaria
-    MOV_id: "",
-    US_Usuario: "",
-    MON_Moneda: "",
-    TM_Tipomovimiento: "",
-    CUB_Cuentabancaria: "",
     MOV_Descripcion: "",
-    MOV_Fecha_Mov: "",
-    MOV_Valor: "",
+    MOV_Valor: null,
+    MOV_Tipo: "",
+    CUB_Cuentabancaria: "",
   });
-  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchCuentas = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/cuentasBancarias`);
+        const data = await res.json();
+        setCuentas(Array.isArray(data) ? data : []);
+      } catch {
+        setCuentas([]);
+      }
+    };
+    const fetchTipos = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/tipoMovimiento`);
+        const data = await res.json();
+        setTipos(Array.isArray(data) ? data : []);
+      } catch {
+        setTipos([]);
+      }
+    };
+    fetchCuentas();
+    fetchTipos();
+  }, []);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleNumberChange = (e) => {
+    setFormData((prev) => ({ ...prev, MOV_Valor: e.value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.MOV_Descripcion || !formData.MOV_Valor || !formData.MOV_Tipo || !formData.CUB_Cuentabancaria) {
+      toast.current.show({ severity: "warn", summary: "Campos requeridos", detail: "Todos los campos son obligatorios.", life: 3000 });
+      return;
+    }
+    setLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/movimiento`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
       if (res.ok) {
-        onSuccess();
+        toast.current.show({ severity: "success", summary: "Movimiento creado", detail: "El movimiento fue registrado correctamente.", life: 2000 });
+        setTimeout(() => onSuccess && onSuccess(), 1200);
       } else {
         const errorText = await res.text();
-        setErrorMessage(errorText);
+        toast.current.show({ severity: "error", summary: "Error", detail: errorText, life: 3500 });
       }
-    } catch (err) {
-      console.error("Error al crear el movimiento:", err);
-      setErrorMessage("Ocurrió un error al intentar agregar el registro.");
+    } catch {
+      toast.current.show({ severity: "error", summary: "Error", detail: "Error al registrar el movimiento.", life: 3500 });
     }
+    setLoading(false);
   };
 
   return (
-    <div>
-      <h2>Agregar Movimiento</h2>
-      {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="MOV_Movimiento"
-          placeholder="ID Movimiento (Llave primaria)"
-          value={formData.MOV_Movimiento}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="MOV_id"
-          placeholder="Referencia"
-          value={formData.MOV_id}
-          onChange={handleChange}
-          required
-        />
-        <input type="text" name="US_Usuario" placeholder="Usuario" value={formData.US_Usuario} onChange={handleChange} required />
-        <input type="text" name="MON_Moneda" placeholder="Moneda" value={formData.MON_Moneda} onChange={handleChange} required />
-        <input type="text" name="TM_Tipomovimiento" placeholder="Tipo Movimiento" value={formData.TM_Tipomovimiento} onChange={handleChange} required />
-        <input type="text" name="CUB_Cuentabancaria" placeholder="Cuenta Bancaria" value={formData.CUB_Cuentabancaria} onChange={handleChange} required />
-        <input type="text" name="MOV_Descripcion" placeholder="Descripción" value={formData.MOV_Descripcion} onChange={handleChange} />
-        <input type="datetime-local" name="MOV_Fecha_Mov" placeholder="Fecha Movimiento" value={formData.MOV_Fecha_Mov} onChange={handleChange} required />
-        <input type="number" name="MOV_Valor" placeholder="Valor" value={formData.MOV_Valor} onChange={handleChange} required />
-        <button type="submit">Agregar</button>
-        <button type="button" onClick={onCancel}>Cancelar</button>
-      </form>
+    <div style={{ minHeight: "100vh", background: "#f6f8fa", padding: "40px 0", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <Toast ref={toast} />
+      <Card
+        title="Nuevo Movimiento"
+        style={{
+          width: "100%",
+          maxWidth: 420,
+          borderRadius: 16,
+          boxShadow: "0 2px 16px #e0e1dd",
+          background: "#fff",
+        }}
+      >
+        <form onSubmit={handleSubmit} autoComplete="off">
+          <div className="p-field" style={{ marginBottom: 18 }}>
+            <label htmlFor="MOV_Descripcion" style={{ fontWeight: 600, color: "#1B263B" }}>Descripción</label>
+            <InputText
+              id="MOV_Descripcion"
+              name="MOV_Descripcion"
+              value={formData.MOV_Descripcion}
+              onChange={handleChange}
+              placeholder="Descripción del movimiento"
+              style={{ width: "100%" }}
+              autoFocus
+            />
+          </div>
+          <div className="p-field" style={{ marginBottom: 18 }}>
+            <label htmlFor="MOV_Valor" style={{ fontWeight: 600, color: "#1B263B" }}>Valor</label>
+            <InputNumber
+              id="MOV_Valor"
+              name="MOV_Valor"
+              value={formData.MOV_Valor}
+              onValueChange={handleNumberChange}
+              mode="decimal"
+              min={0}
+              step={0.01}
+              showButtons
+              placeholder="Valor"
+              style={{ width: "100%" }}
+              inputStyle={{ width: "100%" }}
+            />
+          </div>
+          <div className="p-field" style={{ marginBottom: 18 }}>
+            <label htmlFor="MOV_Tipo" style={{ fontWeight: 600, color: "#1B263B" }}>Tipo de Movimiento</label>
+            <Dropdown
+              id="MOV_Tipo"
+              name="MOV_Tipo"
+              value={formData.MOV_Tipo}
+              options={tipos.map(tipo => ({
+                label: tipo.TM_descripcion || tipo.TM_Tipomovimiento,
+                value: tipo.TM_Tipomovimiento
+              }))}
+              onChange={handleChange}
+              placeholder="Seleccione tipo de movimiento"
+              style={{ width: "100%" }}
+              showClear
+            />
+          </div>
+          <div className="p-field" style={{ marginBottom: 18 }}>
+            <label htmlFor="CUB_Cuentabancaria" style={{ fontWeight: 600, color: "#1B263B" }}>Cuenta Bancaria</label>
+            <Dropdown
+              id="CUB_Cuentabancaria"
+              name="CUB_Cuentabancaria"
+              value={formData.CUB_Cuentabancaria}
+              options={cuentas.map(cuenta => ({
+                label: cuenta.CUB_Nombre || cuenta.CUB_Cuentabancaria,
+                value: cuenta.CUB_Cuentabancaria
+              }))}
+              onChange={handleChange}
+              placeholder="Seleccione una cuenta"
+              style={{ width: "100%" }}
+              showClear
+            />
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 16, marginTop: 18 }}>
+            <Button type="button" label="Cancelar" className="p-button-secondary" onClick={onCancel} disabled={loading} />
+            <Button type="submit" label="Guardar" className="p-button-success" loading={loading} />
+          </div>
+        </form>
+      </Card>
     </div>
   );
 }

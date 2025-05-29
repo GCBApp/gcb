@@ -54,22 +54,23 @@ export const createMoneda = async (req, res) => {
 
     const pool = await sql.connect(sqlConfig);
 
+    // Verificar si ya existe la combinación de moneda y fecha
     const checkId = await pool
       .request()
-      .input("moneda", sql.Char(10), MON_moneda)
-      .query("SELECT COUNT(*) AS count FROM GCB_MONEDA WHERE MON_moneda = @moneda");
-
+      .input("moneda", sql.VarChar(10), MON_moneda)
+      .input("fecha", sql.Date, MON_Fecha_Mov)
+      .query("SELECT COUNT(*) AS count FROM GCB_MONEDA WHERE MON_moneda = @moneda AND MON_Fecha_Mov = @fecha");
     if (checkId.recordset[0].count > 0) {
-      return res.status(400).send("La moneda ya existe. No se pueden agregar registros duplicados.");
+      return res.status(400).send("La moneda con esa fecha ya existe. No se pueden agregar registros duplicados.");
     }
 
     await pool
       .request()
-      .input("moneda", sql.Char(10), MON_moneda)
+      .input("moneda", sql.VarChar(10), MON_moneda)
       .input("fecha", sql.Date, MON_Fecha_Mov)
-      .input("nombre", sql.VarChar, MON_nombre)
-      .input("compra", sql.Decimal(18, 5), MON_Tipo_Compra)
-      .input("venta", sql.Decimal(18, 5), MON_Tipo_Venta)
+      .input("nombre", sql.VarChar(50), MON_nombre)
+      .input("compra", sql.Decimal(9, 2), MON_Tipo_Compra)
+      .input("venta", sql.Decimal(9, 2), MON_Tipo_Venta)
       .input("idBanguat", sql.Int, MON_id_Banguat)
       .query(
         "INSERT INTO GCB_MONEDA (MON_moneda, MON_Fecha_Mov, MON_nombre, MON_Tipo_Compra, MON_Tipo_Venta, MON_id_Banguat) VALUES (@moneda, @fecha, @nombre, @compra, @venta, @idBanguat)"
@@ -99,7 +100,7 @@ export const updateMoneda = async (req, res) => {
       .input("nombre", sql.VarChar, MON_nombre)
       .input("compra", sql.Decimal(18, 5), MON_Tipo_Compra)
       .input("venta", sql.Decimal(18, 5), MON_Tipo_Venta)
-      .input("idBanguat", sql.Int, MON_id_Banguat)
+      .input("idBanguat", sql.Int, MON_id_Banguat) // corregido
       .query(
         "UPDATE GCB_MONEDA SET MON_moneda = @moneda, MON_Fecha_Mov = @fecha, MON_nombre = @nombre, MON_Tipo_Compra = @compra, MON_Tipo_Venta = @venta, MON_id_Banguat = @idBanguat WHERE MON_moneda = @id"
       );
@@ -160,3 +161,5 @@ export const updateExchangeRates = async (req, res) => {
     res.status(500).send("Error interno del servidor.");
   }
 };
+
+

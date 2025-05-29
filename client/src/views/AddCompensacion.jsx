@@ -105,74 +105,7 @@ function AddCompensacion({ onCancel, onSuccess, initialData = {}, globalToast })
     }
   };
 
-  return (
-    <div style={overlayStyle}>
-      <div style={formContainerStyle}>
-        <h3 style={headerStyle}>Nueva Compensación</h3>
-        <form onSubmit={handleSubmit} style={formStyle}>
-          <div style={inputGroupStyle}>
-            <label style={labelStyle}>ID de Compensación:</label>
-            <input
-              type="text"
-              name="COM_Compensacion"
-              value={formData.COM_Compensacion}
-              style={{ ...inputStyle, ...readOnlyStyle }}
-              readOnly
-            />
-          </div>
-          <div style={inputGroupStyle}>
-            <label style={labelStyle}>Descripción:</label>
-            <input
-              type="text"
-              name="COM_Descripción"
-              value={formData.COM_Descripción}
-              onChange={handleChange}
-              style={inputStyle}
-              required
-            />
-          </div>
-          <div style={inputGroupStyle}>
-            <label style={labelStyle}>Fecha:</label>
-            <input
-              type="date"
-              name="COM_Fecha"
-              value={formData.COM_Fecha}
-              style={{ ...inputStyle, ...readOnlyStyle }}
-              readOnly
-            />
-          </div>
-          <div style={inputGroupStyle}>
-            <label style={labelStyle}>Tipo:</label>
-            <input
-              type="text"
-              name="COM_Tipo"
-              value={formData.COM_Tipo}
-              style={{ ...inputStyle, ...readOnlyStyle }}
-              readOnly
-            />
-          </div>
-          <div style={inputGroupStyle}>
-            <label style={labelStyle}>Valor:</label>
-            <input
-              type="number"
-              name="COM_Valor"
-              value={formData.COM_Valor}
-              style={{ ...inputStyle, ...readOnlyStyle }}
-              readOnly
-            />
-          </div>
-          <div style={buttonContainerStyle}>
-            <button type="button" onClick={onCancel} style={cancelButtonStyle}>
-              Cancelar
-            </button>
-            <button type="submit" style={buttonStyle}>
-              Guardar
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
+  return null;
 }
 
 const overlayStyle = {

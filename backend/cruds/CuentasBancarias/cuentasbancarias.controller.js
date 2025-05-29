@@ -19,24 +19,22 @@ export const getAllCuentas = async (req, res) => {
       SELECT 
         cb.CUB_Cuentabancaria,
         cb.CUB_Nombre,
-        cb.CUB_Tipo,
-        cb.CUB_Número,
-        mo.MON_moneda,
-        mo.MON_nombre,
-        b.BAN_bancos,
+        cb.TCP_Tipo_cuenta,
+        tcp.TCP_Descripcion,
+        cb.CUB_Numero,
+        cb.CUB_saldo,
+        cb.BAN_banco,
         b.BAN_Nombre AS Banco_Nombre,
-        b.BAN_Pais AS Banco_Pais,
-        ISNULL( (SUM(m.MOV_Valor) + cb.CUB_saldo), cb.CUB_saldo) AS CUB_saldo -- Calcular saldo dinámicamente
+        cb.MON_moneda,
+        m.MON_nombre AS Moneda_Nombre
       FROM 
         GCB_CUENTA_BANCARIA cb
-      LEFT JOIN 
-        GCB_MOVIMIENTO m ON cb.CUB_Cuentabancaria = m.CUB_Cuentabancaria
       INNER JOIN 
-        GCB_BANCOS b ON cb.BAN_Banco = b.BAN_bancos
+        GCB_BANCOS b ON cb.BAN_banco = b.BAN_banco
       INNER JOIN
-        GCB_MONEDA mo ON cb.MON_moneda = mo.MON_moneda
-      GROUP BY 
-        cb.CUB_Cuentabancaria, cb.CUB_Nombre, cb.CUB_saldo, cb.CUB_Tipo, cb.CUB_Número, mo.MON_nombre, mo.MON_Moneda, b.BAN_bancos, b.BAN_Nombre, b.BAN_Pais
+        GCB_MONEDA m ON cb.MON_moneda = m.MON_moneda
+      INNER JOIN
+        GCB_TIPO_CUENTA_BANCARIA tcp ON cb.TCP_Tipo_cuenta = tcp.TCP_Tipo_cuenta
     `);
     res.json(result.recordset);
   } catch (err) {
@@ -62,11 +60,10 @@ export const getCuentaById = async (req, res) => {
 
 export const createCuenta = async (req, res) => {
   try {
-    const {CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda, CUB_Número, CUB_saldo} = req.body;
+    const { CUB_Nombre, TCP_Tipo_cuenta, BAN_banco, MON_moneda, CUB_Numero, CUB_saldo } = req.body;
 
-    // Validación de datos
-    if ( !CUB_Nombre || !CUB_Tipo || !BAN_banco || !MON_moneda || !CUB_Número) {
-      return res.status(400).send("Faltan datos requeridos: CUB_Cuentabancaria, CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda o CUB_Número");
+    if (!CUB_Nombre || !TCP_Tipo_cuenta || !BAN_banco || !MON_moneda || !CUB_Numero) {
+      return res.status(400).send("Faltan datos requeridos: CUB_Nombre, TCP_Tipo_cuenta, BAN_banco, MON_moneda o CUB_Numero");
     }
 
     const pool = await sql.connect(sqlConfig);
@@ -76,34 +73,30 @@ export const createCuenta = async (req, res) => {
     let counter = 1;
 
     while (exists) {
-      // Generar el ID con el formato CBXXXXXX
       newCuentaId = `CB${String(counter).padStart(6, "0")}`;
-
-    // Verificar si el ID ya existe
-    const checkId = await pool
+      const checkId = await pool
         .request()
-        .input("cuenta", sql.Char(10), newCuentaId)
+        .input("cuenta", sql.VarChar(20), newCuentaId)
         .query("SELECT COUNT(*) AS count FROM GCB_CUENTA_BANCARIA WHERE CUB_Cuentabancaria = @cuenta");
 
       if (checkId.recordset[0].count === 0) {
-        exists = false; // Si no existe, salir del bucle
+        exists = false;
       } else {
-        counter++; // Incrementar el contador si ya existe
+        counter++;
       }
     }
 
-    // Insertar el nuevo registro
     await pool
       .request()
-      .input("cuenta", sql.Char(10), newCuentaId)
-      .input("nombre", sql.VarChar, CUB_Nombre)
-      .input("tipo", sql.VarChar, CUB_Tipo)
-      .input("banco", sql.Char(10), BAN_banco)
-      .input("moneda", sql.VarChar, MON_moneda)
-      .input("Número", sql.Int, CUB_Número)
-      .input("saldo", sql.Decimal(18, 2), CUB_saldo)
+      .input("cuenta", sql.VarChar(20), newCuentaId)
+      .input("nombre", sql.VarChar(100), CUB_Nombre)
+      .input("tipo_cuenta", sql.VarChar(10), TCP_Tipo_cuenta)
+      .input("banco", sql.VarChar(10), BAN_banco)
+      .input("moneda", sql.VarChar(10), MON_moneda)
+      .input("numero", sql.Int, CUB_Numero)
+      .input("saldo", sql.Decimal(9, 2), CUB_saldo)
       .query(
-        "INSERT INTO GCB_CUENTA_BANCARIA (CUB_Cuentabancaria, CUB_Nombre, CUB_Tipo, BAN_banco, MON_moneda, CUB_Número, CUB_saldo) VALUES (@cuenta, @nombre, @tipo, @banco, @moneda, @Número, @saldo)"
+        "INSERT INTO GCB_CUENTA_BANCARIA (CUB_Cuentabancaria, CUB_Nombre, TCP_Tipo_cuenta, BAN_banco, MON_moneda, CUB_Numero, CUB_saldo) VALUES (@cuenta, @nombre, @tipo_cuenta, @banco, @moneda, @numero, @saldo)"
       );
     res.status(201).send("Cuenta creada");
   } catch (err) {

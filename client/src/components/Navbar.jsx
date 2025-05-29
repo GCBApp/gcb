@@ -30,12 +30,13 @@ const Navbar = ({ showLoginOnly = false }) => {
   const items = showLoginOnly ? [] : [
     { label: "Inicio", icon: "pi pi-home", command: () => navigate("/HomePage") },
     { label: "Cuentas", icon: "pi pi-wallet", command: () => navigate("/accounts") },
-    { label: "Movimientos", icon: "pi pi-exchange", command: () => navigate("/carga") },
+    { label: "Movimientos", icon: "pi pi-exchange", command: () => navigate("/movements") },
+    { label: "Periodos", icon: "pi pi-calendar", command: () => navigate("/periodos") }, // NUEVO
     { label: "Perfil", icon: "pi pi-user", command: () => navigate("/profile") },
     { label: "Conciliacion", icon: "pi pi-upload", command: () => navigate("/conciliacion") },
-    { label: "Compensasion", icon: "pi pi-calculator", command: () => navigate("/compensasion") },
+    // { label: "Compensasion", icon: "pi pi-calculator", command: () => navigate("/compensasion") }, // ELIMINADO
     { label: "Cruds", icon: "pi pi-cog", command: () => navigate("/cruds") },
-{ label: "Cerrar Sesión", icon: "pi pi-sign-out", command: handleLogout },
+    { label: "Cerrar Sesión", icon: "pi pi-sign-out", command: handleLogout },
   ];
 
   const start = <img src={logo} alt="Logo" style={{ height: "40px", backgroundColor: "transparent" }} />;
@@ -56,13 +57,20 @@ const Navbar = ({ showLoginOnly = false }) => {
       <ConfirmDialog
         visible={visible}
         onHide={() => setVisible(false)}
-        message="¿Desea cerrar sesión?"
+        message={
+          <span>
+            <i className="pi pi-exclamation-triangle" style={{ color: "#d32f2f", marginRight: 8 }} />
+            ¿Desea cerrar sesión?
+          </span>
+        }
         header="Confirmar cierre de sesión"
-        icon="pi pi-exclamation-triangle"
+        icon="pi pi-sign-out"
         acceptLabel="Cerrar Sesión"
         rejectLabel="Permanecer Conectado"
         accept={confirmLogout}
         reject={() => setVisible(false)}
+        className="p-dialog"
+        style={{ borderRadius: 12 }}
       />
     </header>
   );

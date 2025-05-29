@@ -63,6 +63,10 @@ function CuentaBancaria() {
     fetchCuentas();
   }, []);
 
+  // Obtener el usuario desde localStorage
+  const user = JSON.parse(localStorage.getItem("user")) || JSON.parse(localStorage.getItem("empleado"));
+  const isAdmin = user?.TU_descripcion === "Administrador";
+
   return (
     <div>
       {showAddForm ? (
@@ -85,7 +89,9 @@ function CuentaBancaria() {
       ) : (
         <>
           <h2>Cuentas Bancarias</h2>
-          <button onClick={() => setShowAddForm(true)}>Agregar</button>
+          {isAdmin && (
+            <button onClick={() => setShowAddForm(true)}>Agregar</button>
+          )}
           {errorMessage && (
             <div style={{ color: "red", marginTop: "10px" }}>
               <strong>{errorMessage}</strong>
@@ -96,11 +102,12 @@ function CuentaBancaria() {
               <tr>
                 <th>ID</th>
                 <th>Nombre</th>
-                <th>Tipo</th>
-                <th>ID_Banco</th>
+                <th>Tipo de Cuenta</th>
+                <th>Banco</th>
                 <th>Moneda</th>
                 <th>Número</th>
                 <th>Saldo</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -108,28 +115,32 @@ function CuentaBancaria() {
                 <tr key={item.CUB_Cuentabancaria}>
                   <td>{item.CUB_Cuentabancaria}</td>
                   <td>{item.CUB_Nombre}</td>
-                  <td>{item.CUB_Tipo}</td>
-                  <td>{item.BAN_banco}</td>
-                  <td>{item.MON_moneda}</td>
-                  <td>{item.CUB_Número}</td>
+                  <td>{item.TCP_Tipo_cuenta} - {item.TCP_Descripcion}</td>
+                  <td>{item.BAN_banco} - {item.Banco_Nombre}</td>
+                  <td>{item.MON_moneda} - {item.Moneda_Nombre}</td>
+                  <td>{item.CUB_Numero}</td>
                   <td>{item.CUB_saldo}</td>
                   <td>
-                    <button
-                      onClick={() => {
-                        setEditData(item);
-                        setShowEditForm(true);
-                      }}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => {
-                        setDeleteId(item.CUB_Cuentabancaria);
-                        setShowConfirmDelete(true);
-                      }}
-                    >
-                      Eliminar
-                    </button>
+                    {isAdmin && (
+                      <>
+                        <button
+                          onClick={() => {
+                            setEditData(item);
+                            setShowEditForm(true);
+                          }}
+                        >
+                          Editar
+                        </button>
+                        <button
+                          onClick={() => {
+                            setDeleteId(item.CUB_Cuentabancaria);
+                            setShowConfirmDelete(true);
+                          }}
+                        >
+                          Eliminar
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}
