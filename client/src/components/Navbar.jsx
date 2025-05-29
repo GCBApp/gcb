@@ -63,6 +63,7 @@ const Navbar = ({ showLoginOnly = false }) => {
         rejectLabel="Permanecer Conectado"
         accept={confirmLogout}
         reject={() => setVisible(false)}
+        rejectClassName="white-text"
       />
     </header>
   );
