@@ -1,13 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Calendar } from "primereact/calendar";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { addLocale } from 'primereact/api';
+import "./Conciliacion.css";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 const LOGO_URL = "/src/assets/logo.png";
+
+// Configurar localización en español para el calendario
+addLocale('es', {
+  firstDayOfWeek: 1,
+  dayNames: ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'],
+  dayNamesShort: ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'],
+  dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+  monthNames: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
+  monthNamesShort: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
+  today: 'Hoy',
+  clear: 'Limpiar'
+});
 
 const estadosOrden = ["conciliado", "no conciliado", "anulado"];
 
@@ -19,6 +33,22 @@ const ConciliacionPage = () => {
   const [mes, setMes] = useState(null);
   const [movimientos, setMovimientos] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const calendarContainerRef = useRef(null);
+
+  // Cerrar el calendario al hacer clic fuera de él
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (calendarContainerRef.current && !calendarContainerRef.current.contains(event.target)) {
+        setShowCalendar(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Fetch movimientos al cambiar mes
   useEffect(() => {
@@ -39,6 +69,12 @@ const ConciliacionPage = () => {
     };
     fetchMovs();
   }, [mes]);
+
+  // Mostrar texto del mes seleccionado
+  const formatMes = () => {
+    if (!mes) return "Seleccionar mes";
+    return mes.toLocaleString("es-ES", { month: "long", year: "numeric" });
+  };
 
   // Agrupa movimientos por estado
   const movimientosPorGrupo = () => {
@@ -118,15 +154,59 @@ const ConciliacionPage = () => {
         <p>Seleccione un mes para ver los movimientos conciliados, no conciliados y anulados.</p>
       </div>
       <div style={{ display: "flex", gap: 16, alignItems: "center", marginBottom: 18 }}>
-        <Calendar
-          value={mes}
-          onChange={e => setMes(e.value)}
-          view="month"
-          dateFormat="mm/yy"
-          showIcon
-          placeholder="Seleccionar mes"
-          style={{ minWidth: 160 }}
-        />
+        {/* Contenedor del selector de mes y calendario desplegable */}
+        <div ref={calendarContainerRef} style={{ position: "relative" }}>
+          <Button
+            label={formatMes()}
+            icon="pi pi-calendar"
+            className="p-button-outlined"
+            onClick={() => setShowCalendar(!showCalendar)}
+            style={{
+              minWidth: 180,
+              textAlign: "left",
+              justifyContent: "flex-start",
+              border: "1px solid #ced4da",
+              background: "#ffffff"
+            }}
+          />
+          
+          {/* Calendario desplegable debajo del botón */}
+          {showCalendar && (
+            <div 
+              className="calendar-dropdown"
+              style={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                zIndex: 1000,
+                backgroundColor: "#fff",
+                boxShadow: "0 3px 10px rgba(0,0,0,0.2)",
+                borderRadius: "4px",
+                marginTop: "5px",
+                padding: "10px",
+                width: "320px", // Ancho fijo aumentado
+              }}
+            >
+              <Calendar
+                value={mes}
+                onChange={(e) => {
+                  setMes(e.value);
+                  setShowCalendar(false);
+                }}
+                view="month"
+                dateFormat="mm/yy"
+                locale="es"
+                inline
+                className="custom-calendar"
+              />
+              <div className="calendar-footer" style={{ marginTop: "8px", textAlign: "center", fontSize: "0.85rem", color: "#666" }}>
+                <span>← → Cambiar año • Click para seleccionar mes</span>
+              </div>
+            </div>
+          )}
+        </div>
+        
+        {/* Botón de exportar con su color original */}
         <Button
           label="Exportar PDF"
           icon="pi pi-file-pdf"
@@ -135,6 +215,7 @@ const ConciliacionPage = () => {
           disabled={!movimientos.length}
         />
       </div>
+      
       {/* Mostrar cada grupo por separado */}
       {Object.entries(movimientosPorGrupo()).map(([grupo, lista]) => (
         lista.length ? (

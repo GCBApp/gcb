@@ -28,3 +28,151 @@
     height: 14px;
   }
   
+  /* Estilos para los botones de navegación del año en el calendario */
+.custom-calendar .p-datepicker-header .p-datepicker-prev span,
+.custom-calendar .p-datepicker-header .p-datepicker-next span {
+  color: white !important;
+}
+
+.custom-calendar .p-datepicker-header .p-datepicker-title button {
+  color: white !important;
+}
+
+/* Mejorar aspecto del botón de año */
+.custom-calendar .p-datepicker-header .p-datepicker-title .p-datepicker-year {
+  background-color: #222;
+  color: white !important;
+}
+
+/* Mejorar el aspecto del dropdown del calendario */
+.calendar-dropdown {
+  min-width: 280px;
+  width: 100%;
+}
+
+/* Hacer que el calendario ocupe todo el espacio disponible */
+.calendar-dropdown .p-datepicker {
+  width: 100% !important;
+}
+
+.calendar-dropdown .p-datepicker table {
+  width: 100% !important;
+  margin: 0;
+}
+
+/* Mejorar aspecto de los botones de navegación */
+.custom-calendar .p-datepicker-header {
+  position: relative;
+  padding: 0.5rem;
+  background: #333;
+}
+
+.custom-calendar .p-datepicker-header .p-datepicker-prev,
+.custom-calendar .p-datepicker-header .p-datepicker-next {
+  position: relative;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  border-radius: 50%;
+  background-color: #555 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mejorar aspecto del botón de año - sin flechas */
+.custom-calendar .p-datepicker-header .p-datepicker-title .p-datepicker-year {
+  background-color: #222;
+  color: white !important;
+  /* Eliminamos el padding extra que reservaba espacio para las flechas */
+  padding-left: 0.5rem; 
+  padding-right: 0.5rem;
+}
+
+/* Eliminar las reglas que añadían flechas al botón de año */
+/* (Comentamos estas reglas para que sea fácil restaurarlas si se necesita)
+.custom-calendar .p-datepicker-header .p-datepicker-title .p-datepicker-year:before,
+.custom-calendar .p-datepicker-header .p-datepicker-title .p-datepicker-year:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.custom-calendar .p-datepicker-header .p-datepicker-title .p-datepicker-year:before {
+  left: 0.3rem;
+  transform: translateY(-50%);
+  border-width: 5px 8px 5px 0;
+  border-color: transparent white transparent transparent;
+}
+
+.custom-calendar .p-datepicker-header .p-datepicker-title .p-datepicker-year:after {
+  right: 0.3rem;
+  transform: translateY(-50%);
+  border-width: 5px 0 5px 8px;
+  border-color: transparent transparent transparent white;
+}
+*/
+
+/* Añadir flechas más visibles a los botones laterales */
+.custom-calendar .p-datepicker-header .p-datepicker-prev:before,
+.custom-calendar .p-datepicker-header .p-datepicker-next:before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+/* Flecha izquierda */
+.custom-calendar .p-datepicker-header .p-datepicker-prev:before {
+  border-width: 8px 12px 8px 0;
+  border-color: transparent white transparent transparent;
+  left: 8px;
+}
+
+/* Flecha derecha */
+.custom-calendar .p-datepicker-header .p-datepicker-next:before {
+  border-width: 8px 0 8px 12px;
+  border-color: transparent transparent transparent white;
+  right: 8px;
+}
+
+/* Ocultar iconos originales de flechas */
+.custom-calendar .p-datepicker-header .p-datepicker-prev span,
+.custom-calendar .p-datepicker-header .p-datepicker-next span {
+  display: none;
+}
+
+/* Mejorar contraste del año */
+.custom-calendar .p-datepicker-header .p-datepicker-title {
+  color: white !important;
+  font-weight: bold;
+}
+
+/* Resaltar mes seleccionado */
+.custom-calendar .p-monthpicker .p-monthpicker-month.p-highlight {
+  background: #007bff !important;
+  color: #fff !important;
+}
+
+/* Mejorar visualización de meses en el calendario */
+.custom-calendar .p-datepicker-month-picker {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  width: 100% !important;
+  gap: 0.5rem !important;
+}
+
+.custom-calendar .p-monthpicker-month {
+  width: 100% !important;
+  border-radius: 4px !important;
+  padding: 0.5rem !important;
+  text-align: center !important;
+}
+
+.custom-calendar .p-monthpicker-month.p-highlight {
+  background-color: #0d6efd !important;
+  color: white !important;
+}

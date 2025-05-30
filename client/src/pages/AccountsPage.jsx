@@ -202,24 +202,38 @@ const AccountsPage = () => {
     }
     setFormLoading(true);
     try {
+      // Asegurarnos que todos los campos tengan valores y con los nombres exactos que espera el backend
+      const dataToSubmit = {
+        CUB_Cuentabancaria: editFormData.CUB_Cuentabancaria || "",
+        CUB_nombre: editFormData.CUB_Nombre || "", // Exactamente como lo espera el backend
+        CUB_Tipo: editFormData.TCP_Tipo_cuenta || "",
+        BAN_banco: editFormData.BAN_banco || "",
+        MON_moneda: editFormData.MON_moneda || "",
+        CUB_Número: editFormData.CUB_Numero || "", // Añadimos el acento como espera el backend
+        CUB_saldo: editFormData.CUB_saldo || 0
+      };
+
+      console.log("Datos enviados al backend:", dataToSubmit);
+
       const res = await fetch(`${API_URL}/api/cuentasBancarias/${editFormData.CUB_Cuentabancaria}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...editFormData,
-          // No enviar saldo como editable
-        }),
+        headers: { 
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dataToSubmit),
       });
+      
       if (res.ok) {
         toast.current.show({ severity: "success", summary: "Cuenta actualizada", detail: "La cuenta fue actualizada correctamente.", life: 2000 });
         setShowEditDialog(false);
         fetchCuentas();
       } else {
         const errorText = await res.text();
-        toast.current.show({ severity: "error", summary: "Error", detail: errorText, life: 3500 });
+        toast.current.show({ severity: "error", summary: "Error", detail: `Error: ${errorText}`, life: 3500 });
       }
     } catch (err) {
-      toast.current.show({ severity: "error", summary: "Error", detail: "Error al actualizar la cuenta.", life: 3500 });
+      console.error("Error al actualizar cuenta:", err);
+      toast.current.show({ severity: "error", summary: "Error", detail: `Error: ${err.message}`, life: 3500 });
     }
     setFormLoading(false);
   };
@@ -429,6 +443,7 @@ const AccountsPage = () => {
         footer={null}
         contentStyle={{ background: "#fff", borderRadius: 16, padding: 0 }}
         closable={false}
+        showHeader={false} // Añadir esta línea
       >
         <form onSubmit={handleAddSubmit} autoComplete="off" style={{ padding: 0 }}>
           <div style={{ padding: 24 }}>
@@ -471,7 +486,7 @@ const AccountsPage = () => {
                 onChange={handleAddChange}
                 placeholder="Seleccione tipo de cuenta"
                 style={{ width: "100%" }}
-                showClear
+                showClear={false}
               />
             </div>
             <div className="p-field" style={{ marginBottom: 18 }}>
@@ -487,7 +502,7 @@ const AccountsPage = () => {
                 onChange={handleAddChange}
                 placeholder="Seleccione un tipo de moneda"
                 style={{ width: "100%" }}
-                showClear
+                showClear={false}
               />
             </div>
             <div className="p-field" style={{ marginBottom: 18 }}>
@@ -503,7 +518,7 @@ const AccountsPage = () => {
                 onChange={handleAddChange}
                 placeholder="Seleccione un banco"
                 style={{ width: "100%" }}
-                showClear
+                showClear={false}
               />
             </div>
             <div className="p-field" style={{ marginBottom: 18 }}>
@@ -516,10 +531,9 @@ const AccountsPage = () => {
                 mode="decimal"
                 min={0}
                 step={0.01}
-                showButtons
+                showButtons={false}
                 placeholder="Saldo inicial"
                 style={{ width: "100%" }}
-                inputStyle={{ width: "100%" }}
               />
             </div>
             <Button type="submit" label="Agregar" className="p-button-success" loading={formLoading} style={{
@@ -542,6 +556,7 @@ const AccountsPage = () => {
         footer={null}
         contentStyle={{ background: "#fff", borderRadius: 16, padding: 0 }}
         closable={false}
+        showHeader={false} // Añadir esta línea
       >
         <form onSubmit={handleEditSubmit} autoComplete="off" style={{ padding: 0 }}>
           <div style={{ padding: 24 }}>
@@ -584,7 +599,7 @@ const AccountsPage = () => {
                 onChange={handleEditChange}
                 placeholder="Seleccione tipo de cuenta"
                 style={{ width: "100%" }}
-                showClear
+                showClear={false}
               />
             </div>
             <div className="p-field" style={{ marginBottom: 18 }}>
@@ -600,7 +615,7 @@ const AccountsPage = () => {
                 onChange={handleEditChange}
                 placeholder="Seleccione un tipo de moneda"
                 style={{ width: "100%" }}
-                showClear
+                showClear={false}
               />
             </div>
             <div className="p-field" style={{ marginBottom: 18 }}>
@@ -616,7 +631,7 @@ const AccountsPage = () => {
                 onChange={handleEditChange}
                 placeholder="Seleccione un banco"
                 style={{ width: "100%" }}
-                showClear
+                showClear={false}
               />
             </div>
             <div className="p-field" style={{ marginBottom: 18 }}>
@@ -628,11 +643,10 @@ const AccountsPage = () => {
                 mode="decimal"
                 min={0}
                 step={0.01}
-                showButtons
+                showButtons={false}
                 placeholder="Saldo inicial"
                 style={{ width: "100%" }}
                 inputStyle={{ width: "100%" }}
-                disabled // SOLO LECTURA AL EDITAR
               />
             </div>
             <Button type="submit" label="Guardar" className="p-button-success" loading={formLoading} style={{

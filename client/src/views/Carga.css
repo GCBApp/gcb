@@ -431,3 +431,13 @@ body {
   background-color: #0D1B2A;
   color: white;
 }
+
+/* Añadir este estilo para eliminar la barra azul */
+.gcb-modal .p-dialog-header {
+  display: none !important;
+}
+
+/* Asegúrate de ajustar los bordes redondeados superiores ya que no habrá encabezado */
+.gcb-modal .p-dialog-content {
+  border-radius: 16px 16px 16px 16px !important;
+}
