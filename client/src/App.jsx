@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import AccountsPage from "./pages/AccountsPage";
@@ -17,13 +17,11 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 
 function AppContent() {
   const { isAuthenticated } = useAuth();
-  const location = useLocation(); 
-  const hideNavbar = location.pathname === "/Login" || location.pathname === "/"; 
-
+  
   return (
     <div className="app-container">
       {/* Renderizar el Navbar solo si el usuario está autenticado */}
-      {isAuthenticated && !hideNavbar && <Navbar />}
+      {isAuthenticated && <Navbar />}
       <main className="main-content">
         <Routes>
           <Route path="/Login" element={<Login />} />
