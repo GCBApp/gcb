@@ -7,6 +7,7 @@ import {
   deleteEmpleado,
   getTiposEmpleado,
   login,
+  changePassword,
 } from "./empleado.controller.js";
 
 const router = Router();
@@ -18,5 +19,6 @@ router.put("/:id", updateEmpleado);
 router.delete("/:id", deleteEmpleado);
 router.get("/tipoEmpleado", getTiposEmpleado);
 router.post("/login", login);
+router.put('/:id/cambiar-contrasena', changePassword);
 
 export default router;

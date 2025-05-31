@@ -32,7 +32,6 @@ const Navbar = ({ showLoginOnly = false }) => {
     { label: "Cuentas", icon: "pi pi-wallet", command: () => navigate("/accounts") },
     { label: "Movimientos", icon: "pi pi-exchange", command: () => navigate("/movements") },
     { label: "Periodos", icon: "pi pi-calendar", command: () => navigate("/periodos") }, // NUEVO
-    { label: "Perfil", icon: "pi pi-user", command: () => navigate("/profile") },
     { label: "Conciliacion", icon: "pi pi-upload", command: () => navigate("/conciliacion") },
     // { label: "Compensasion", icon: "pi pi-calculator", command: () => navigate("/compensasion") }, // ELIMINADO
     { label: "Cruds", icon: "pi pi-cog", command: () => navigate("/cruds") },
@@ -40,7 +39,16 @@ const Navbar = ({ showLoginOnly = false }) => {
   ];
 
   const start = <img src={logo} alt="Logo" style={{ height: "40px", backgroundColor: "transparent" }} />;
-  const end = showLoginOnly ? null : <i className="pi pi-user" style={{ fontSize: "1.5rem" }}></i>;
+  const end = showLoginOnly
+  ? null
+  : (
+      <i
+        className="pi pi-user"
+        style={{ fontSize: "1.5rem", cursor: "pointer" }}
+        onClick={() => navigate("/profile")}
+        title="Perfil"
+      ></i>
+    );
 
   return (
     <header>

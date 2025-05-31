@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TipoUsuario from "../cruds/TipoUsuario/TipoUsuario";
 import Moneda from "../cruds/Moneda/Moneda";
 import Usuario from "../cruds/Usuario/Usuario";
@@ -11,6 +11,17 @@ import Estado from "../cruds/Estado/Estado";
 
 const CrudPage = () => {
   const [selectedCrud, setSelectedCrud] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("empleado") || localStorage.getItem("user");
+    if (userData) {
+      const user = JSON.parse(userData);
+      setIsAdmin(user.TU_descripcion === "Administrador");
+    }
+    setChecked(true);
+  }, []);
 
   const cruds = [
     { name: "Tipo Usuario", component: <TipoUsuario /> },
@@ -23,6 +34,23 @@ const CrudPage = () => {
     { name: "Compensacion", component: <Compensacion /> },
     { name: "Estado", component: <Estado /> },
   ];
+
+  if (!checked) {
+    return null; // Espera a verificar el usuario
+  }
+
+  if (!isAdmin) {
+    return (
+      <section className="crud-page" style={pageStyle}>
+        <div className="content-container" style={containerStyle}>
+          <h1>Cruds</h1>
+          <div style={{ color: "#d32f2f", fontWeight: "bold", fontSize: "1.2em", marginTop: "40px" }}>
+            Vista no disponible
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="crud-page" style={pageStyle}>

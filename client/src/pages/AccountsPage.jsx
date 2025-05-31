@@ -8,7 +8,9 @@ import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
 import { FaWallet, FaMoneyBillWave, FaExchangeAlt } from "react-icons/fa";
 
+
 const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
 
 const AccountsPage = () => {
   const [cuentas, setCuentas] = useState([]);
@@ -36,12 +38,21 @@ const AccountsPage = () => {
   const [monedas, setMonedas] = useState([]);
   const [tiposCuenta, setTiposCuenta] = useState([]);
   const [formLoading, setFormLoading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const toast = useRef(null);
+
 
   useEffect(() => {
     fetchCuentas();
     fetchCatalogos();
+    // Verificar si el usuario es administrador
+    const userData = localStorage.getItem("empleado") || localStorage.getItem("user");
+    if (userData) {
+      const user = JSON.parse(userData);
+      setIsAdmin(user.TU_descripcion === "Administrador");
+    }
   }, []);
+
 
   const fetchCuentas = async () => {
     setLoading(true);
@@ -59,6 +70,7 @@ const AccountsPage = () => {
     setLoading(false);
   };
 
+
   const fetchCatalogos = async () => {
     try {
       const [bancosRes, monedasRes, tiposRes] = await Promise.all([
@@ -74,6 +86,7 @@ const AccountsPage = () => {
     }
   };
 
+
   const handleAddAccount = () => {
     setAddFormData({
       CUB_Nombre: "",
@@ -86,6 +99,7 @@ const AccountsPage = () => {
     setShowAddDialog(true);
   };
 
+
   const handleEdit = (id) => {
     const cuenta = cuentas.find(c => c.CUB_Cuentabancaria === id);
     setEditFormData({
@@ -94,6 +108,7 @@ const AccountsPage = () => {
     });
     setShowEditDialog(true);
   };
+
 
   const handleDelete = async (id) => {
     setShowConfirmDelete(false);
@@ -112,6 +127,7 @@ const AccountsPage = () => {
     }
     setLoading(false);
   };
+
 
   const handleCardClick = async (cuenta) => {
     setSelectedCuenta(cuenta);
@@ -133,6 +149,7 @@ const AccountsPage = () => {
       console.error("Error al cargar historial de saldos:", err);
     }
   };
+
 
   // --- FORMULARIO AGREGAR CUENTA (efecto GCB, modal) ---
   const handleAddChange = (e) => {
@@ -183,6 +200,7 @@ const AccountsPage = () => {
     setFormLoading(false);
   };
 
+
   // --- FORMULARIO EDITAR CUENTA (efecto GCB, modal) ---
   const handleEditChange = (e) => {
     const { name, value } = e.target;
@@ -202,68 +220,57 @@ const AccountsPage = () => {
     }
     setFormLoading(true);
     try {
-      // Asegurarnos que todos los campos tengan valores y con los nombres exactos que espera el backend
-      const dataToSubmit = {
-        CUB_Cuentabancaria: editFormData.CUB_Cuentabancaria || "",
-        CUB_nombre: editFormData.CUB_Nombre || "", // Exactamente como lo espera el backend
-        CUB_Tipo: editFormData.TCP_Tipo_cuenta || "",
-        BAN_banco: editFormData.BAN_banco || "",
-        MON_moneda: editFormData.MON_moneda || "",
-        CUB_Número: editFormData.CUB_Numero || "", // Añadimos el acento como espera el backend
-        CUB_saldo: editFormData.CUB_saldo || 0
-      };
-
-      console.log("Datos enviados al backend:", dataToSubmit);
-
       const res = await fetch(`${API_URL}/api/cuentasBancarias/${editFormData.CUB_Cuentabancaria}`, {
         method: "PUT",
-        headers: { 
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(dataToSubmit),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...editFormData,
+          // No enviar saldo como editable
+        }),
       });
-      
       if (res.ok) {
         toast.current.show({ severity: "success", summary: "Cuenta actualizada", detail: "La cuenta fue actualizada correctamente.", life: 2000 });
         setShowEditDialog(false);
         fetchCuentas();
       } else {
         const errorText = await res.text();
-        toast.current.show({ severity: "error", summary: "Error", detail: `Error: ${errorText}`, life: 3500 });
+        toast.current.show({ severity: "error", summary: "Error", detail: errorText, life: 3500 });
       }
     } catch (err) {
-      console.error("Error al actualizar cuenta:", err);
-      toast.current.show({ severity: "error", summary: "Error", detail: `Error: ${err.message}`, life: 3500 });
+      toast.current.show({ severity: "error", summary: "Error", detail: "Error al actualizar la cuenta.", life: 3500 });
     }
     setFormLoading(false);
   };
 
+
   return (
     <div style={{ minHeight: "100vh", background: "#f6f8fa", padding: "40px 0", position: "relative" }}>
       <Toast ref={toast} />
-      {/* Botón flotante efecto GCB */}
-      <Button
-        icon="pi pi-plus"
-        className="p-button-rounded p-button-success"
-        style={{
-          position: "fixed",
-          bottom: 40,
-          right: 40,
-          zIndex: 100,
-          width: 56,
-          height: 56,
-          fontSize: 24,
-          background: "#21B573",
-          boxShadow: "0 4px 16px #21B57344",
-          border: "none",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
-        }}
-        onClick={handleAddAccount}
-        tooltip="Nueva cuenta bancaria"
-        tooltipOptions={{ position: "left" }}
-      />
+      {/* Botón flotante efecto GCB solo para administradores */}
+      {isAdmin && (
+        <Button
+          icon="pi pi-plus"
+          className="p-button-rounded p-button-success"
+          style={{
+            position: "fixed",
+            bottom: 40,
+            right: 40,
+            zIndex: 100,
+            width: 56,
+            height: 56,
+            fontSize: 24,
+            background: "#21B573",
+            boxShadow: "0 4px 16px #21B57344",
+            border: "none",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+          onClick={handleAddAccount}
+          tooltip="Nueva cuenta bancaria"
+          tooltipOptions={{ position: "left" }}
+        />
+      )}
       <Card
         title="Cuentas bancarias"
         subTitle="Consulta y administración de cuentas bancarias"
@@ -312,7 +319,7 @@ const AccountsPage = () => {
                 }}>
                   <div style={{ width: "120px", height: "60px", display: "flex", alignItems: "flex-start" }}>
                     <img
-                      src={`/bancos/${(cuenta.Banco_Nombre || "").toLowerCase().replace(/\s/g, "")}.png`}
+                      src={`/bancos/${(cuenta.BAN_banco || "").toLowerCase().replace(/\s/g, "")}.png`}
                       alt={cuenta.Banco_Nombre}
                       style={{ maxHeight: "50px", maxWidth: "100%", objectFit: "contain" }}
                       onError={e => { e.target.onerror = null; e.target.src = "/bancos/default.png"; }}
@@ -338,14 +345,16 @@ const AccountsPage = () => {
                       tooltip="Editar"
                       tooltipOptions={{ position: "top" }}
                     />
-                    <Button
-                      icon="pi pi-trash"
-                      className="p-button-rounded p-button-text p-button-danger"
-                      style={{ fontSize: 20, background: "#D90429", color: "#fff" }}
-                      onClick={e => { e.stopPropagation(); setDeleteId(cuenta.CUB_Cuentabancaria); setShowConfirmDelete(true); }}
-                      tooltip="Eliminar"
-                      tooltipOptions={{ position: "top" }}
-                    />
+                    {isAdmin && (
+                      <Button
+                        icon="pi pi-trash"
+                        className="p-button-rounded p-button-text p-button-danger"
+                        style={{ fontSize: 20, background: "#D90429", color: "#fff" }}
+                        onClick={e => { e.stopPropagation(); setDeleteId(cuenta.CUB_Cuentabancaria); setShowConfirmDelete(true); }}
+                        tooltip="Eliminar"
+                        tooltipOptions={{ position: "top" }}
+                      />
+                    )}
                   </div>
                 </div>
                 <div style={{

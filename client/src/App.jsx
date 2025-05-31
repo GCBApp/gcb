@@ -7,7 +7,7 @@ import MovementsPage from "./pages/MovementsPage";
 import ProfilePage from "./pages/ProfilePage";
 import CrudPage from "./pages/CrudPage";
 import Login from "./views/Login";
-import UserInfo from "./views/UserInfo";
+import Profile from "./pages/ProfilePage";
 import ConciliacionPage from "./pages/ConciliacionPage";
 import CompensasionPage from "./pages/CompensasionPage";
 // import AddAccount from "./pages/AddAcount";
@@ -30,7 +30,7 @@ function AppContent() {
           <Route path="/accounts" element={<AccountsPage />} />
           <Route path="/edit-account/:id" element={<EditAccount />} />
           <Route path="/movements" element={<MovementsPage />} />
-          <Route path="/profile" element={<UserInfo />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/cruds" element={<CrudPage />} />
           <Route path="/conciliacion" element={<ConciliacionPage />} />
           {/* <Route path="/compensasion" element={<CompensasionPage />} /> */}
